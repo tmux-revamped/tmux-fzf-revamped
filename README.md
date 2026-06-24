@@ -4,7 +4,7 @@
 
 **Jump to any session, window, or pane, or kill it, from one fzf popup.**
 
-[![Tests](https://github.com/gufranco/tmux-fzf-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/gufranco/tmux-fzf-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
+[![Tests](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 
 </div>
 
@@ -12,7 +12,7 @@
 
 A fast fzf interface for navigating tmux. Fuzzy-search your sessions, windows, or panes and jump straight to the choice, or kill it. Each picker runs in a popup, and the hidden target id rides along in the list so a window named `feature/login` still resolves to the right place.
 
-Built from [tmux-plugin-template](https://github.com/gufranco/tmux-plugin-template).
+Built from [tmux-plugin-template](https://github.com/tmux-revamped/tmux-plugin-template).
 
 <table>
 <tr>
@@ -41,7 +41,7 @@ All keys are configurable, and `fzf.sh <session\|window\|pane> kill` can be boun
 With [TPM](https://github.com/tmux-plugins/tpm), add to `~/.tmux.conf`:
 
 ```tmux
-set -g @plugin 'gufranco/tmux-fzf-revamped'
+set -g @plugin 'tmux-revamped/tmux-fzf-revamped'
 ```
 
 Press `prefix + I`. Requires [fzf](https://github.com/junegunn/fzf) and tmux 3.2+ for `display-popup`.
