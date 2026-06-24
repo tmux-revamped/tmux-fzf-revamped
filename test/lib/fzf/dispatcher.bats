@@ -79,3 +79,17 @@ teardown() {
   run _tmux -V
   [ "${status}" -eq 0 ]
 }
+
+@test "fzf.sh - border-flag subcommand prints a gated flag" {
+  run main border-flag 3.4 rounded
+  [[ "${output}" == "-b rounded" ]]
+  run main border-flag 3.2 rounded
+  [[ -z "${output}" ]]
+}
+
+@test "fzf.sh - supports-popup subcommand reflects the version" {
+  run main supports-popup 3.2
+  [ "${status}" -eq 0 ]
+  run main supports-popup 3.0
+  [ "${status}" -eq 1 ]
+}

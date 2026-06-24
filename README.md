@@ -56,6 +56,7 @@ Press `prefix + I`. Requires [fzf](https://github.com/junegunn/fzf) and tmux 3.2
 | `@fzf_revamped_kill_key` | `X` | kill-session key |
 | `@fzf_revamped_popup_width` | `60%` | popup width |
 | `@fzf_revamped_popup_height` | `50%` | popup height |
+| `@fzf_revamped_popup_border` | `rounded` | popup border style on tmux 3.4+ (`rounded`, `single`, `double`, `heavy`, `simple`, `padded`, or `none`); ignored on older tmux |
 
 ## Compatibility
 

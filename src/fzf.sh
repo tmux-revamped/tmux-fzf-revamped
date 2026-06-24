@@ -74,7 +74,11 @@ fzf_run() {
 }
 
 main() {
-  fzf_run "${1:-session}" "${2:-switch}"
+  case "${1:-}" in
+    border-flag)    fzf_border_flag "${2:-}" "${3:-}" ;;
+    supports-popup) fzf_supports_popup "${2:-}" ;;
+    *)              fzf_run "${1:-session}" "${2:-switch}" ;;
+  esac
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
