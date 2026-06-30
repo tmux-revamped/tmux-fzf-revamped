@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-30
+
+### Added
+
+- Tree picker that spans sessions, windows, and panes in one view.
+- Create-on-miss: type a name that matches nothing and the picker creates and
+  attaches that session.
+- URL picker that pulls links from the current pane and opens them in the
+  browser or copies them to the tmux buffer.
+- Command palette of common tmux commands, run on select.
+- Keybinding cheatsheet picker over `list-keys`.
+- Process picker that sends a signal to a chosen process, behind a confirm.
+- Window and session rename through a tmux prompt.
+- Multi-select kill that removes several marked objects after a confirm.
+- Broadcast a command to several marked panes at once.
+- zoxide directory picker that opens or attaches a session at a project dir.
+- Last-session toggle and an opt-in most-recently-attached order for the
+  session picker.
+- Move or link a window into another session.
+- Opt-in live pane preview in the switch pickers via `@fzf_revamped_preview`.
+
 ## [1.1.0] - 2026-06-23
 
 ### Added
