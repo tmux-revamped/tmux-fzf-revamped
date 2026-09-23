@@ -27,26 +27,32 @@ Built from [tmux-plugin-template](https://github.com/tmux-revamped/tmux-plugin-t
 
 ## Keys
 
+One key by default, the palette, which reaches every picker.
+
 | Key | Action |
 |-----|--------|
-| `prefix + s` | switch session |
-| `prefix + w` | switch window |
-| `prefix + e` | switch pane |
-| `prefix + X` | kill session |
-| `prefix + T` | tree view across sessions, windows, and panes |
-| `prefix + C` | switch to a session, or create one from the typed name |
-| `prefix + u` | open a URL from the current pane's scrollback |
-| `prefix + O` | command palette of common tmux commands |
-| `prefix + /` | search the keybinding list |
-| `prefix + k` | pick a process and send it a signal (confirmed) |
-| `prefix + R` | rename a window |
-| `prefix + K` | mark several sessions and kill them (confirmed) |
-| `prefix + b` | broadcast a command to several marked panes |
-| `prefix + G` | open or attach a session at a zoxide directory |
-| `prefix + L` | toggle to the last session |
-| `prefix + M` | move a window into another session |
+| `prefix + M-f` | command palette: every picker in one menu |
 
-All keys are configurable. The dispatcher also accepts `fzf.sh <session\|window\|pane> kill` for window and pane kills, `fzf.sh urls copy` to copy instead of open, `fzf.sh process <SIGNAL>` for a non-default signal, `fzf.sh rename session`, `fzf.sh multi-kill <mode>`, and `fzf.sh move-window link`.
+Every other action ships unbound so that installing the whole family produces
+no key conflict. Bind the ones you want:
+
+```tmux
+set -g @fzf_revamped_session_key s
+set -g @fzf_revamped_window_key w
+set -g @fzf_revamped_pane_key e
+set -g @fzf_revamped_kill_key X
+set -g @fzf_revamped_tree_key T
+set -g @fzf_revamped_create_key C
+set -g @fzf_revamped_url_key u
+set -g @fzf_revamped_cheatsheet_key /
+set -g @fzf_revamped_process_key k
+set -g @fzf_revamped_rename_key R
+set -g @fzf_revamped_multikill_key K
+set -g @fzf_revamped_broadcast_key b
+set -g @fzf_revamped_zoxide_key G
+set -g @fzf_revamped_last_key L
+set -g @fzf_revamped_move_key M
+```
 
 ## Install
 
