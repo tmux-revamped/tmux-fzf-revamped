@@ -123,3 +123,19 @@ bound_command() {
   # Assert
   [ ! -s "${BIND_LOG}" ]
 }
+
+@test "fzf-revamped.tmux - broadcast prompt stores quoted input and opens a tmux-quoted popup" {
+  # Arrange
+  local suffix
+  suffix="$(cat <<'EXPECTED'
+/plug\\ in\\'dir/src/fzf.sh broadcast"
+EXPECTED
+)"
+  set_opt @fzf_revamped_broadcast_key b
+
+  # Act
+  bash "${PLUGIN_COPY}/fzf-revamped.tmux"
+
+  # Assert
+  [ "$(bound_command b)" = "set-option -g @fzf_revamped_broadcast_text \"%%%\" ; display-popup -E -w 60% -h 50% \"${BATS_TEST_TMPDIR}${suffix}" ]
+}

@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Actions whose key option is empty, the default for every action except the
   palette, are no longer passed to `bind-key` with an empty key. A key option
   set to `off` also leaves its action unbound.
+- Text typed into the broadcast, rename, and move-window prompts reaches tmux
+  through the quoting `%%%` placeholder, so quotes, `$`, and `;` stay literal
+  instead of ending the command or running in a shell.
 
 ## [1.2.0] - 2026-06-30
 

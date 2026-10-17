@@ -215,9 +215,9 @@ fzf_rename() {
   id="$(fzf_id_of "${selection}")"
   [[ -z "${id}" ]] && return 0
   if [[ "${mode}" == "session" ]]; then
-    _tmux command-prompt -p "New session name:" "rename-session -t '${id}' '%%'"
+    _tmux command-prompt -p "New session name:" "rename-session -t '${id}' \"%%%\""
   else
-    _tmux command-prompt -p "New window name:" "rename-window -t '${id}' '%%'"
+    _tmux command-prompt -p "New window name:" "rename-window -t '${id}' \"%%%\""
   fi
 }
 
@@ -242,10 +242,15 @@ INNER
 }
 
 # fzf_broadcast CMD -> send CMD followed by Enter to several marked panes.
+# With no CMD, the text the broadcast prompt stored is taken and cleared.
 fzf_broadcast() {
   local cmd panes selection line id
   cmd="${1:-}"
-  [[ -z "${cmd}" ]] && return 0
+  if [[ -z "${cmd}" ]]; then
+    cmd="$(get_tmux_option @fzf_revamped_broadcast_text "")"
+    [[ -z "${cmd}" ]] && return 0
+    unset_tmux_option @fzf_revamped_broadcast_text
+  fi
   panes="$(_list_panes)"
   [[ -z "${panes}" ]] && return 0
   selection="$(printf '%s\n' "${panes}" | _fzf --with-nth 2 -m)"
@@ -287,9 +292,9 @@ fzf_move_window() {
   id="$(fzf_id_of "${selection}")"
   [[ -z "${id}" ]] && return 0
   if [[ "${action}" == "link" ]]; then
-    _tmux command-prompt -p "Link to session:" "link-window -s '${id}' -t '%%'"
+    _tmux command-prompt -p "Link to session:" "link-window -s '${id}' -t \"%%%\""
   else
-    _tmux command-prompt -p "Move to session:" "move-window -s '${id}' -t '%%'"
+    _tmux command-prompt -p "Move to session:" "move-window -s '${id}' -t \"%%%\""
   fi
 }
 

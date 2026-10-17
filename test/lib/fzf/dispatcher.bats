@@ -391,3 +391,54 @@ teardown() {
   run main move-window move
   [[ ! -f "$(ACT)" ]]
 }
+
+@test "fzf.sh - rename hands the typed name to tmux through the quoting placeholder" {
+  # Arrange
+  _tmux() {
+    case "${1}" in
+      list-sessions) printf 'main\tmain (3 win)\n' ;;
+      command-prompt) printf '%s' "${4}" > "$(ACT)" ;;
+    esac
+  }
+
+  # Act
+  run main rename session
+
+  # Assert
+  [ "$(cat "$(ACT)")" = "rename-session -t 'main' \"%%%\"" ]
+}
+
+@test "fzf.sh - move-window hands the typed session to tmux through the quoting placeholder" {
+  # Arrange
+  _tmux() {
+    case "${1}" in
+      list-windows) printf 'main:1\tmain:1 editor\n' ;;
+      command-prompt) printf '%s' "${4}" > "$(ACT)" ;;
+    esac
+  }
+
+  # Act
+  run main move-window move
+
+  # Assert
+  [ "$(cat "$(ACT)")" = "move-window -s 'main:1' -t \"%%%\"" ]
+}
+
+@test "fzf.sh - broadcast sends the stored prompt text literally and clears it" {
+  # Arrange
+  tmux set-option -gq @fzf_revamped_broadcast_text 'echo "$HOME" ; ls'
+  _fzf() { printf 'main:1.0\tp\n'; }
+  _tmux() {
+    case "${1}" in
+      list-panes) printf 'main:1.0\tmain:1.0 vim\n' ;;
+      send-keys) printf '%s' "${4}" > "$(ACT)" ;;
+    esac
+  }
+
+  # Act
+  run main broadcast
+
+  # Assert
+  [ "$(cat "$(ACT)")" = 'echo "$HOME" ; ls' ] || false
+  [ -z "$(get_tmux_option @fzf_revamped_broadcast_text "")" ]
+}

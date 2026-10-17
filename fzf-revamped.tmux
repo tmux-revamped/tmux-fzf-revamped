@@ -86,11 +86,17 @@ fi
 if ! key_bound "${broadcast_key}"; then
   exit 0
 fi
+tmux_quote() {
+  printf '"%s"' "$(printf '%s' "${1}" | sed 's/[\\"$]/\\&/g')"
+}
+
+store_text='set-option -g @fzf_revamped_broadcast_text "%%%"'
+broadcast_cmd="$(tmux_quote "${FZF_SHELL_CMD} broadcast")"
 if [[ "${popup_capable}" -eq 1 ]]; then
   # shellcheck disable=SC2086
   tmux bind-key "${broadcast_key}" command-prompt -p "broadcast:" \
-    "display-popup -E ${border_flag} -w ${width} -h ${height} '${FZF_SHELL_CMD} broadcast \"%%\"'"
+    "${store_text} ; display-popup -E${border_flag:+ ${border_flag}} -w ${width} -h ${height} ${broadcast_cmd}"
 else
   tmux bind-key "${broadcast_key}" command-prompt -p "broadcast:" \
-    "new-window '${FZF_SHELL_CMD} broadcast \"%%\"'"
+    "${store_text} ; new-window ${broadcast_cmd}"
 fi
