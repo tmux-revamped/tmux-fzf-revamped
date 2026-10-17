@@ -109,6 +109,28 @@ teardown() {
   [[ "$(cat "$(ACT)")" == "TMUX:switch-client -t main" ]]
 }
 
+@test "fzf.sh - preview command runs from a path with a space and a quote" {
+  # Arrange
+  local stub_dir="${BATS_TEST_TMPDIR}/my dir'x"
+  mkdir -p "${stub_dir}"
+  printf '#!/bin/sh\nprintf "%%s\\n" "$*" > "${PREVIEW_LOG}"\n' > "${stub_dir}/fzf.sh"
+  chmod +x "${stub_dir}/fzf.sh"
+  export PREVIEW_LOG="${BATS_TEST_TMPDIR}/preview.log"
+  # shellcheck disable=SC2034
+  FZF_SELF="${stub_dir}/fzf.sh"
+  _fzf() { printf '%s\n' "$@" > "${BATS_TEST_TMPDIR}/fzf.args"; head -n1; }
+  tmux set-option -gq @fzf_revamped_preview on
+  main session switch
+  local preview
+  preview="$(sed -n '/^--preview$/{n;p;}' "${BATS_TEST_TMPDIR}/fzf.args")"
+
+  # Act
+  sh -c "${preview//\{1\}/main:1.0}"
+
+  # Assert
+  [ "$(cat "${PREVIEW_LOG}")" = "preview main:1.0" ]
+}
+
 @test "fzf.sh - session list can be ordered by recency" {
   tmux set-option -gq @fzf_revamped_mru on
   _tmux() {

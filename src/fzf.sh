@@ -104,7 +104,7 @@ fzf_run() {
   [[ -z "${items}" ]] && return 0
   preview="$(get_tmux_option @fzf_revamped_preview "")"
   if [[ "${preview}" == "on" || "${preview}" == "1" ]]; then
-    selection="$(printf '%s\n' "${items}" | _fzf --with-nth 2 --preview "${FZF_SELF} preview {1}" --preview-window=down:40%)"
+    selection="$(printf '%s\n' "${items}" | _fzf --with-nth 2 --preview "$(printf '%q' "${FZF_SELF}") preview {1}" --preview-window=down:40%)"
   else
     selection="$(printf '%s\n' "${items}" | _fzf --with-nth 2)"
   fi

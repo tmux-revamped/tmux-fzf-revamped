@@ -10,6 +10,7 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FZF_CMD="${CURRENT_DIR}/src/fzf.sh"
+FZF_SHELL_CMD="$(printf '%q' "${FZF_CMD}")"
 
 chmod +x "${FZF_CMD}" 2>/dev/null || true
 
@@ -44,13 +45,13 @@ move_key="$(get_opt "@fzf_revamped_move_key" "")"
 if "${FZF_CMD}" supports-popup "${ver}"; then
   bind_picker() {
     # shellcheck disable=SC2086
-    tmux bind-key "${1}" display-popup -E ${border_flag} -w "${width}" -h "${height}" "${FZF_CMD} ${2}"
+    tmux bind-key "${1}" display-popup -E ${border_flag} -w "${width}" -h "${height}" "${FZF_SHELL_CMD} ${2}"
   }
   popup_capable=1
 else
   # display-popup needs tmux 3.2; older tmux runs the picker in a new window.
   bind_picker() {
-    tmux bind-key "${1}" new-window "${FZF_CMD} ${2}"
+    tmux bind-key "${1}" new-window "${FZF_SHELL_CMD} ${2}"
   }
   popup_capable=0
 fi
@@ -71,14 +72,14 @@ bind_picker "${zoxide_key}" "zoxide"
 bind_picker "${move_key}" "move-window move"
 
 # Last-session toggle needs no picker, so it runs without a popup.
-tmux bind-key "${last_key}" run-shell "${FZF_CMD} last"
+tmux bind-key "${last_key}" run-shell "${FZF_SHELL_CMD} last"
 
 # Broadcast gathers the command first, then opens a multi-select pane picker.
 if [[ "${popup_capable}" -eq 1 ]]; then
   # shellcheck disable=SC2086
   tmux bind-key "${broadcast_key}" command-prompt -p "broadcast:" \
-    "display-popup -E ${border_flag} -w ${width} -h ${height} '${FZF_CMD} broadcast \"%%\"'"
+    "display-popup -E ${border_flag} -w ${width} -h ${height} '${FZF_SHELL_CMD} broadcast \"%%\"'"
 else
   tmux bind-key "${broadcast_key}" command-prompt -p "broadcast:" \
-    "new-window '${FZF_CMD} broadcast \"%%\"'"
+    "new-window '${FZF_SHELL_CMD} broadcast \"%%\"'"
 fi
