@@ -8,6 +8,7 @@ ACT() { printf '%s' "${BATS_TEST_TMPDIR}/act"; }
 setup() {
   setup_test_environment
   unset _FZF_REVAMPED_LOADED
+  # shellcheck source=/dev/null
   source "${DISPATCHER}"
   _tmux() {
     case "${1}" in
@@ -84,6 +85,7 @@ teardown() {
 
 @test "fzf.sh - the tmux seam is callable" {
   unset _FZF_REVAMPED_LOADED
+  # shellcheck source=/dev/null
   source "${DISPATCHER}"
   run _tmux -V
   [ "${status}" -eq 0 ]
