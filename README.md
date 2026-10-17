@@ -27,14 +27,15 @@ Built from [tmux-plugin-template](https://github.com/tmux-revamped/tmux-plugin-t
 
 ## Keys
 
-One key by default, the palette, which reaches every picker.
+One key by default, the command palette.
 
 | Key | Action |
 |-----|--------|
-| `prefix + M-f` | command palette: every picker in one menu |
+| `prefix + M-f` | command palette: run a common tmux command such as `new-window`, a split, `kill-pane`, or `detach-client` |
 
 Every other action ships unbound so that installing the whole family produces
-no key conflict. Bind the ones you want:
+no key conflict. Bind the ones you want; a key option left empty or set to
+`off` binds nothing:
 
 ```tmux
 set -g @fzf_revamped_session_key s
@@ -68,27 +69,27 @@ Press `prefix + I`. Requires [fzf](https://github.com/junegunn/fzf) and tmux 3.2
 
 | Option | Default | Meaning |
 |--------|---------|---------|
-| `@fzf_revamped_session_key` | `s` | switch-session key |
-| `@fzf_revamped_window_key` | `w` | switch-window key |
-| `@fzf_revamped_pane_key` | `e` | switch-pane key |
-| `@fzf_revamped_kill_key` | `X` | kill-session key |
+| `@fzf_revamped_session_key` | _(unbound)_ | switch-session key |
+| `@fzf_revamped_window_key` | _(unbound)_ | switch-window key |
+| `@fzf_revamped_pane_key` | _(unbound)_ | switch-pane key |
+| `@fzf_revamped_kill_key` | _(unbound)_ | kill-session key |
 | `@fzf_revamped_popup_width` | `60%` | popup width |
 | `@fzf_revamped_popup_height` | `50%` | popup height |
 | `@fzf_revamped_popup_border` | `rounded` | popup border style on tmux 3.4+ (`rounded`, `single`, `double`, `heavy`, `simple`, `padded`, or `none`); ignored on older tmux |
 | `@fzf_revamped_preview` | _(off)_ | set to `on` to show a live pane preview in the switch pickers |
 | `@fzf_revamped_mru` | _(off)_ | set to `on` to order the session picker by most recent attach |
-| `@fzf_revamped_tree_key` | `T` | tree-view key |
-| `@fzf_revamped_create_key` | `C` | create-on-miss key |
-| `@fzf_revamped_url_key` | `u` | URL picker key |
-| `@fzf_revamped_palette_key` | `O` | command-palette key |
-| `@fzf_revamped_cheatsheet_key` | `/` | keybinding-search key |
-| `@fzf_revamped_process_key` | `k` | process-killer key |
-| `@fzf_revamped_rename_key` | `R` | rename key |
-| `@fzf_revamped_multikill_key` | `K` | multi-kill key |
-| `@fzf_revamped_broadcast_key` | `b` | broadcast key |
-| `@fzf_revamped_zoxide_key` | `G` | zoxide-directory key |
-| `@fzf_revamped_last_key` | `L` | last-session toggle key |
-| `@fzf_revamped_move_key` | `M` | move-window key |
+| `@fzf_revamped_tree_key` | _(unbound)_ | tree-view key |
+| `@fzf_revamped_create_key` | _(unbound)_ | create-on-miss key |
+| `@fzf_revamped_url_key` | _(unbound)_ | URL picker key |
+| `@fzf_revamped_palette_key` | `M-f` | command-palette key |
+| `@fzf_revamped_cheatsheet_key` | _(unbound)_ | keybinding-search key |
+| `@fzf_revamped_process_key` | _(unbound)_ | process-killer key |
+| `@fzf_revamped_rename_key` | _(unbound)_ | rename key |
+| `@fzf_revamped_multikill_key` | _(unbound)_ | multi-kill key |
+| `@fzf_revamped_broadcast_key` | _(unbound)_ | broadcast key |
+| `@fzf_revamped_zoxide_key` | _(unbound)_ | zoxide-directory key |
+| `@fzf_revamped_last_key` | _(unbound)_ | last-session toggle key |
+| `@fzf_revamped_move_key` | _(unbound)_ | move-window key |
 
 ## Compatibility
 
