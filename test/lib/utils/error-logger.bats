@@ -34,7 +34,7 @@ teardown() {
 @test "error-logger.sh - log_error writes a line when logging is enabled" {
   tmux set-option -gq @test_rev_enable_logging 1
   log_error startup "hello world"
-  [[ -f "${PLUGIN_LOG_FILE}" ]]
+  [[ -f "${PLUGIN_LOG_FILE}" ]] || false
   grep -q "startup" "${PLUGIN_LOG_FILE}"
   grep -q "hello world" "${PLUGIN_LOG_FILE}"
 }
@@ -47,8 +47,8 @@ teardown() {
 
 @test "error-logger.sh - _rotate_log trims an oversized log" {
   tmux set-option -gq @test_rev_enable_logging 1
-  PLUGIN_MAX_LOG_SIZE=10
-  PLUGIN_MAX_LOG_LINES=2
+  export PLUGIN_MAX_LOG_SIZE=10
+  export PLUGIN_MAX_LOG_LINES=2
   mkdir -p "${PLUGIN_LOG_DIR}"
   printf 'l1\nl2\nl3\nl4\nl5\n' > "${PLUGIN_LOG_FILE}"
   log_error comp "trigger"
