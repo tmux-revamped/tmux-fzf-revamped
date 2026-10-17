@@ -42,8 +42,13 @@ zoxide_key="$(get_opt "@fzf_revamped_zoxide_key" "")"
 last_key="$(get_opt "@fzf_revamped_last_key" "")"
 move_key="$(get_opt "@fzf_revamped_move_key" "")"
 
+key_bound() {
+  [[ -n "${1}" && "${1}" != "off" ]]
+}
+
 if "${FZF_CMD}" supports-popup "${ver}"; then
   bind_picker() {
+    key_bound "${1}" || return 0
     # shellcheck disable=SC2086
     tmux bind-key "${1}" display-popup -E ${border_flag} -w "${width}" -h "${height}" "${FZF_SHELL_CMD} ${2}"
   }
@@ -51,6 +56,7 @@ if "${FZF_CMD}" supports-popup "${ver}"; then
 else
   # display-popup needs tmux 3.2; older tmux runs the picker in a new window.
   bind_picker() {
+    key_bound "${1}" || return 0
     tmux bind-key "${1}" new-window "${FZF_SHELL_CMD} ${2}"
   }
   popup_capable=0
@@ -72,9 +78,14 @@ bind_picker "${zoxide_key}" "zoxide"
 bind_picker "${move_key}" "move-window move"
 
 # Last-session toggle needs no picker, so it runs without a popup.
-tmux bind-key "${last_key}" run-shell "${FZF_SHELL_CMD} last"
+if key_bound "${last_key}"; then
+  tmux bind-key "${last_key}" run-shell "${FZF_SHELL_CMD} last"
+fi
 
 # Broadcast gathers the command first, then opens a multi-select pane picker.
+if ! key_bound "${broadcast_key}"; then
+  exit 0
+fi
 if [[ "${popup_capable}" -eq 1 ]]; then
   # shellcheck disable=SC2086
   tmux bind-key "${broadcast_key}" command-prompt -p "broadcast:" \

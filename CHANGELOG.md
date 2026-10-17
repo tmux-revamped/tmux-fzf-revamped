@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Key bindings, the popup fallback, and the preview pane quote the plugin path,
   so an install path containing a space or a quote runs the picker.
+- Actions whose key option is empty, the default for every action except the
+  palette, are no longer passed to `bind-key` with an empty key. A key option
+  set to `off` also leaves its action unbound.
 
 ## [1.2.0] - 2026-06-30
 

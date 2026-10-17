@@ -99,3 +99,27 @@ bound_command() {
   # Assert
   [ "$(cat "${STUB_LOG}")" = "last" ]
 }
+
+@test "fzf-revamped.tmux - unset keys stay unbound and only the palette binds" {
+  # Arrange
+  local first_key
+
+  # Act
+  bash "${PLUGIN_COPY}/fzf-revamped.tmux"
+
+  # Assert
+  first_key="$(head -n1 "${BIND_LOG}" | cut -d "$(printf '\037')" -f1)"
+  [ "$(wc -l < "${BIND_LOG}" | tr -d ' ')" = "1" ] || false
+  [ "${first_key}" = "M-f" ]
+}
+
+@test "fzf-revamped.tmux - a key set to off binds nothing" {
+  # Arrange
+  set_opt @fzf_revamped_palette_key off
+
+  # Act
+  bash "${PLUGIN_COPY}/fzf-revamped.tmux"
+
+  # Assert
+  [ ! -s "${BIND_LOG}" ]
+}
