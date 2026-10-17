@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-#
-# fzf-revamped.tmux: TPM entry point.
-#
-# Binds popup pickers for sessions, windows, and panes, plus pickers for the
-# tree view, create-on-miss, URLs, the command palette, the keybinding
-# cheatsheet, the process killer, rename, multi-kill, broadcast, zoxide
-# directories, last-session toggle, and move-window. Each popup runs the
-# dispatcher and acts on the selection.
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FZF_CMD="${CURRENT_DIR}/src/fzf.sh"
@@ -54,7 +46,6 @@ if "${FZF_CMD}" supports-popup "${ver}"; then
   }
   popup_capable=1
 else
-  # display-popup needs tmux 3.2; older tmux runs the picker in a new window.
   bind_picker() {
     key_bound "${1}" || return 0
     tmux bind-key "${1}" new-window "${FZF_SHELL_CMD} ${2}"
@@ -77,12 +68,10 @@ bind_picker "${multikill_key}" "multi-kill session"
 bind_picker "${zoxide_key}" "zoxide"
 bind_picker "${move_key}" "move-window move"
 
-# Last-session toggle needs no picker, so it runs without a popup.
 if key_bound "${last_key}"; then
   tmux bind-key "${last_key}" run-shell "${FZF_SHELL_CMD} last"
 fi
 
-# Broadcast gathers the command first, then opens a multi-select pane picker.
 if ! key_bound "${broadcast_key}"; then
   exit 0
 fi

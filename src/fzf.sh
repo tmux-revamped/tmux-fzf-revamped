@@ -1,28 +1,4 @@
 #!/usr/bin/env bash
-#
-# fzf.sh: command dispatcher for tmux-fzf-revamped.
-#
-# Usage: fzf.sh SUBCOMMAND [ARGS]
-#   <mode> [switch|kill]  pick a session/window/pane and jump to or kill it
-#   tree                  one picker across sessions > windows > panes
-#   create                pick a session or type a new name to create one
-#   urls [open|copy]      pick a URL from the current pane's scrollback
-#   palette               run a common tmux command
-#   cheatsheet            search the keybinding list
-#   process [SIGNAL]      pick a process and send it a signal (confirmed)
-#   rename [window|session] pick a target and rename it
-#   multi-kill [mode]     mark several objects and kill them (confirmed)
-#   broadcast CMD         send CMD to several marked panes
-#   zoxide                open or attach a session at a zoxide directory
-#   last                  toggle to the last session
-#   move-window [move|link] move or link a window into another session
-#   preview ID            print a target's pane contents (fzf --preview helper)
-#   border-flag / supports-popup  entry-point capability probes
-#
-# Designed to run inside a tmux popup. Every tmux call goes through one _tmux
-# seam, the picker through _fzf, the browser through _open, the directory source
-# through _zoxide, the process list through _ps, and the signal send through
-# _signal, so all routing is testable without a tmux server, fzf, or side effects.
 
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FZF_SELF="${BASH_SOURCE[0]}"
@@ -32,7 +8,6 @@ source "${PLUGIN_DIR}/src/lib/tmux/tmux-ops.sh"
 # shellcheck source=/dev/null
 source "${PLUGIN_DIR}/src/lib/fzf/fzf.sh"
 
-# Host-probe seams. Tests override or stub the underlying binary.
 _tmux() { tmux "$@" 2>/dev/null; }
 _fzf() { fzf --no-sort --reverse --height=100% --delimiter "$(printf '\t')" "$@"; }
 _open() { open "$1" 2>/dev/null || xdg-open "$1" 2>/dev/null; }
@@ -82,14 +57,12 @@ fzf_kill() {
   esac
 }
 
-# fzf_confirm -> success only when the user picks "yes" in the confirm picker.
 fzf_confirm() {
   local ans
   ans="$(printf 'no\nyes\n' | _fzf)"
   [[ "${ans}" == "yes" ]]
 }
 
-# fzf_preview ID -> the captured contents of the target's pane, for fzf --preview.
 fzf_preview() {
   local id="${1}"
   [[ -z "${id}" ]] && return 0
@@ -118,8 +91,6 @@ fzf_run() {
   fi
 }
 
-# fzf_tree -> one picker spanning sessions, windows, and panes; the id shape
-# decides how to jump.
 fzf_tree() {
   local items selection id kind
   items="$(_list_sessions; _list_windows; _list_panes)"
@@ -132,8 +103,6 @@ fzf_tree() {
   fzf_goto "${kind}" "${id}"
 }
 
-# fzf_create_or_switch -> jump to a picked session, or create and attach a new
-# one named after the typed query when nothing matched.
 fzf_create_or_switch() {
   local items out query sel id name
   items="$(_list_sessions)"
@@ -151,8 +120,6 @@ fzf_create_or_switch() {
   fi
 }
 
-# fzf_urls [open|copy] -> pick a URL from the current pane and open it in the
-# browser or copy it to the tmux buffer.
 fzf_urls() {
   local action text urls selection
   action="${1:-open}"
@@ -168,7 +135,6 @@ fzf_urls() {
   fi
 }
 
-# fzf_palette -> run a common tmux command picked from a searchable list.
 fzf_palette() {
   local selection cmd
   selection="$(fzf_palette_list | _fzf --with-nth 2)"
@@ -178,7 +144,6 @@ fzf_palette() {
   _tmux ${cmd}
 }
 
-# fzf_cheatsheet -> search the keybinding list as a reference.
 fzf_cheatsheet() {
   local keys
   keys="$(_tmux list-keys)"
@@ -187,8 +152,6 @@ fzf_cheatsheet() {
   return 0
 }
 
-# fzf_processes [SIGNAL] -> pick a process and, after confirmation, send it a
-# signal.
 fzf_processes() {
   local sig procs selection pid
   sig="$(fzf_valid_signal "${1:-TERM}")"
@@ -202,8 +165,6 @@ fzf_processes() {
   _signal "${sig}" "${pid}"
 }
 
-# fzf_rename [window|session] -> pick a target and rename it through a tmux
-# command prompt. Panes have no name, so a pane request renames its window.
 fzf_rename() {
   local mode items selection id
   mode="$(fzf_valid_mode "${1}")"
@@ -221,8 +182,6 @@ fzf_rename() {
   fi
 }
 
-# fzf_multi_kill [mode] -> mark several objects and, after confirmation, kill
-# each.
 fzf_multi_kill() {
   local mode items selection line id
   mode="$(fzf_valid_mode "${1}")"
@@ -241,8 +200,6 @@ ${selection}
 INNER
 }
 
-# fzf_broadcast CMD -> send CMD followed by Enter to several marked panes.
-# With no CMD, the text the broadcast prompt stored is taken and cleared.
 fzf_broadcast() {
   local cmd panes selection line id
   cmd="${1:-}"
@@ -266,7 +223,6 @@ ${selection}
 INNER
 }
 
-# fzf_zoxide -> pick a zoxide directory and open or attach a session there.
 fzf_zoxide() {
   local dirs selection name
   dirs="$(_zoxide)"
@@ -278,11 +234,8 @@ fzf_zoxide() {
   _switch_client "${name}"
 }
 
-# fzf_last -> toggle to the last session.
 fzf_last() { _tmux switch-client -l; }
 
-# fzf_move_window [move|link] -> pick a window and move or link it into another
-# session chosen through a tmux command prompt.
 fzf_move_window() {
   local action items selection id
   action="${1:-move}"

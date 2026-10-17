@@ -1,10 +1,4 @@
 #!/usr/bin/env bats
-#
-# Exercises the real seam bodies in src/fzf.sh for line coverage without ever
-# touching a real fzf, browser, zoxide, or signalled process. The underlying
-# binary is replaced by a safe shell function in the test, then the seam is
-# called in-process. tmux is already mocked by helpers.bash, and ps is
-# read-only.
 
 load "${BATS_TEST_DIRNAME}/../../helpers.bash"
 
