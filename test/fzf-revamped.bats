@@ -127,10 +127,7 @@ bound_command() {
 @test "fzf-revamped.tmux - broadcast prompt stores quoted input and opens a tmux-quoted popup" {
   # Arrange
   local suffix
-  suffix="$(cat <<'EXPECTED'
-/plug\\ in\\'dir/src/fzf.sh broadcast"
-EXPECTED
-)"
+  suffix='/plug\\ in\\'"'"'dir/src/fzf.sh broadcast"'
   set_opt @fzf_revamped_broadcast_key b
 
   # Act
