@@ -8,7 +8,7 @@
 
 </div>
 
-**switch · kill · create · tree · broadcast** · **tmux 3.2 to 3.5** · **103** tests · **95%+** coverage
+**switch · kill · create · tree · broadcast** · **tmux 3.2+** · **95%+** coverage
 
 A fast fzf interface for navigating tmux. Fuzzy-search your sessions, windows, or panes and jump straight to the choice, or kill it. Each picker runs in a popup, and the hidden target id rides along in the list so a window named `feature/login` still resolves to the right place.
 
