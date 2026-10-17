@@ -259,7 +259,8 @@ fzf_broadcast() {
     [[ -z "${line}" ]] && continue
     id="$(fzf_id_of "${line}")"
     [[ -z "${id}" ]] && continue
-    _tmux send-keys -t "${id}" "${cmd}" Enter
+    _tmux send-keys -t "${id}" -l -- "${cmd}"
+    _tmux send-keys -t "${id}" Enter
   done <<INNER
 ${selection}
 INNER

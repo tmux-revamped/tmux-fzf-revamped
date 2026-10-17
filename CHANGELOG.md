@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Text typed into the broadcast, rename, and move-window prompts reaches tmux
   through the quoting `%%%` placeholder, so quotes, `$`, and `;` stay literal
   instead of ending the command or running in a shell.
+- Broadcast types the text with `send-keys -l`, so a command such as `Enter` or
+  `C-c` arrives as those characters rather than as a key press.
 
 ## [1.2.0] - 2026-06-30
 

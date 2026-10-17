@@ -329,7 +329,25 @@ teardown() {
 @test "fzf.sh - broadcast sends the command to each marked pane" {
   _fzf() { printf 'main:1.0\tp\n\n\tx\n'; }
   run main broadcast "ls -la"
-  [[ "$(cat "$(ACT)")" == *"send-keys -t main:1.0 ls -la Enter"* ]]
+  [[ "$(cat "$(ACT)")" == *"send-keys -t main:1.0 -l -- ls -la"* ]] || false
+  [[ "$(cat "$(ACT)")" == *"send-keys -t main:1.0 Enter"* ]]
+}
+
+@test "fzf.sh - broadcast types a key name as literal text before Enter" {
+  # Arrange
+  _fzf() { printf 'main:1.0\tp\n'; }
+  _tmux() {
+    case "${1}" in
+      list-panes) printf 'main:1.0\tmain:1.0 vim\n' ;;
+      send-keys) printf '%s|' "${@}" >> "$(ACT)"; printf '\n' >> "$(ACT)" ;;
+    esac
+  }
+
+  # Act
+  run main broadcast "C-c"
+
+  # Assert
+  [ "$(cat "$(ACT)")" = "$(printf 'send-keys|-t|main:1.0|-l|--|C-c|\nsend-keys|-t|main:1.0|Enter|')" ]
 }
 
 @test "fzf.sh - broadcast with no command does nothing" {
@@ -433,7 +451,7 @@ teardown() {
   _tmux() {
     case "${1}" in
       list-panes) printf 'main:1.0\tmain:1.0 vim\n' ;;
-      send-keys) printf '%s' "${4}" > "$(ACT)" ;;
+      send-keys) [ "${4}" = "-l" ] && printf '%s' "${6}" > "$(ACT)" ;;
     esac
   }
 
