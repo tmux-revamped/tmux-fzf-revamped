@@ -91,6 +91,14 @@ Press `prefix + I`. Requires [fzf](https://github.com/junegunn/fzf) and tmux 3.2
 | `@fzf_revamped_last_key` | _(unbound)_ | last-session toggle key |
 | `@fzf_revamped_move_key` | _(unbound)_ | move-window key |
 
+### Internal state
+
+The plugin manages this option itself. Do not set it.
+
+| Option | Holds |
+|--------|-------|
+| `@fzf_revamped_broadcast_text` | the text typed at the broadcast prompt, held until the pane picker reads it and then unset |
+
 ## Compatibility
 
 Needs tmux 3.2+ for `display-popup` and fzf on the path. Runs on Linux (x86_64 and arm64) and macOS (Intel and Apple Silicon).
