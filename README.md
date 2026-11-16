@@ -162,7 +162,7 @@ The entrypoint [`fzf-revamped.tmux`](fzf-revamped.tmux) checks the tmux version 
 | Command | What it runs |
 |:--------|:-------------|
 | `make test` | the bats suite under [`test/`](test) |
-| `make lint` | shellcheck at warning severity on every shell file and [`family/bin/`](family/bin) |
+| `make lint` | shellcheck at warning severity on every shell file |
 | `make coverage` | kcov line coverage on Linux, failing below 95% |
 
 Id parsing, mode and signal validation, version checks and session naming live in [`src/lib/fzf/fzf.sh`](src/lib/fzf/fzf.sh) as pure functions. Every tmux call in [`src/fzf.sh`](src/fzf.sh) goes through one wrapper, so the routing is tested without a tmux server or fzf.
@@ -175,15 +175,9 @@ Id parsing, mode and signal validation, version checks and session naming live i
 
 ## The tmux-revamped family
 
-This plugin is one member of the tmux-revamped family. Every member carries the
-same contract in [`FAMILY.md`](FAMILY.md), the same tooling under `family/`, and
-the same shared library, all held byte-identical by a checksum manifest. They are
-built to be installed together: no member claims a key or a tmux option that
-another member claims.
+This plugin is one member of the tmux-revamped family. Every member carries the same contract in [`FAMILY.md`](FAMILY.md) and the same shared library, and they are built to be installed together: no member claims a key or a tmux option that another member claims.
 
-A defect found in one member is hunted across all of them before the fix is
-called done. That obligation is written into the contract rather than left to
-memory, and `family/bin/sweep` is how it is discharged.
+A defect found in one member is hunted across all of them before the fix is called done.
 
 | Member | What it does |
 |---|---|
@@ -203,7 +197,7 @@ memory, and `family/bin/sweep` is how it is discharged.
 | [`tmux-network-revamped`](https://github.com/tmux-revamped/tmux-network-revamped) | Network throughput in your tmux status bar, without ever blocking the render |
 | [`tmux-pain-control-revamped`](https://github.com/tmux-revamped/tmux-pain-control-revamped) | Pane and window management bindings for tmux, version aware, vim friendly, every prefix key can be disabled |
 | [`tmux-persist-revamped`](https://github.com/tmux-revamped/tmux-persist-revamped) | Save every tmux session, window and pane, auto-save on a timer, and restore it all after a reboot |
-| [`tmux-plugin-template`](https://github.com/tmux-revamped/tmux-plugin-template) | The starting point for a tmux-revamped plugin: shared library, bats harness, CI and family tooling |
+| [`tmux-plugin-template`](https://github.com/tmux-revamped/tmux-plugin-template) | The starting point for a tmux-revamped plugin: shared library, bats harness and CI |
 | [`tmux-pomodoro-revamped`](https://github.com/tmux-revamped/tmux-pomodoro-revamped) | A Pomodoro timer in the tmux status bar that keeps all of its state in tmux options, with no temp files |
 | [`tmux-ram-revamped`](https://github.com/tmux-revamped/tmux-ram-revamped) | RAM, swap and memory pressure in the tmux status bar, sampled in the background so the render never waits |
 | [`tmux-reorder-revamped`](https://github.com/tmux-revamped/tmux-reorder-revamped) | Drag a window tab along the tmux status bar with the mouse to move that window |
@@ -212,17 +206,5 @@ memory, and `family/bin/sweep` is how it is discharged.
 | [`tmux-tiling-revamped`](https://github.com/tmux-revamped/tmux-tiling-revamped) | Tiling window management for tmux: eight layouts including BSP dwindle and spiral, with layout undo |
 | [`tmux-time-revamped`](https://github.com/tmux-revamped/tmux-time-revamped) | Local and world clocks for the tmux status bar, colored by time of day, with countdowns and a DST warning |
 | [`tmux-weather-revamped`](https://github.com/tmux-revamped/tmux-weather-revamped) | Weather for the tmux status bar from wttr.in, fetched in the background so the status line never waits |
-
-### Checking an installation
-
-With every member on disk, one command reports any conflict between them:
-
-```sh
-family/bin/doctor --live
-```
-
-It reads each member and the running tmux server, and reports duplicate keys,
-duplicate status placeholders, options outside the naming grammar, and any
-member whose contract version has fallen behind.
 
 <!-- family:end -->
