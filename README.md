@@ -4,79 +4,58 @@
 
 <strong>Switch to, kill, rename or create tmux sessions, windows and panes from fzf pickers in a popup.</strong>
 
-English | [日本語](README.ja.md) | [简体中文](README.zh-Hans.md) | [繁體中文（香港）](README.zh-HK.md)
+English &nbsp;|&nbsp; [日本語](README.ja.md) &nbsp;|&nbsp; [简体中文](README.zh-Hans.md) &nbsp;|&nbsp; [繁體中文（香港）](README.zh-HK.md)
 
-[![family](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/family.yml?branch=main&style=flat-square&label=family)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/family.yml)
-[![tests](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/tests.yml?branch=main&style=flat-square&label=tests)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/tests.yml)
+[![ci](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/ci.yml)
 [![release](https://img.shields.io/github/v/release/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=release)](https://github.com/tmux-revamped/tmux-fzf-revamped/releases/latest)
 [![openssf scorecard](https://img.shields.io/ossf-scorecard/github.com/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/tmux-revamped/tmux-fzf-revamped)
 [![license](https://img.shields.io/github/license/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=license)](LICENSE)
 
 <p align="center">
-  <a href="#what-it-does">What it does</a> |
-  <a href="#requirements">Requirements</a> |
-  <a href="#installation">Installation</a> |
-  <a href="#usage">Usage</a> |
-  <a href="#configuration">Configuration</a> |
-  <a href="#key-bindings">Key bindings</a> |
-  <a href="#how-it-works">How it works</a> |
-  <a href="#development">Development</a>
+  <a href="#quick-start"><strong>Quick start</strong></a> &nbsp;|&nbsp;
+  <a href="#usage">Usage</a> &nbsp;|&nbsp;
+  <a href="#pickers">Pickers</a> &nbsp;|&nbsp;
+  <a href="#screens">Screens</a>
 </p>
 
 </div>
 
-**16** actions, **1** bound by default, and **10** tmux commands in the palette.
+<p align="center">
+  <img src="screens/hero.gif" alt="fzf-revamped running a palette command, switching session from the picker and returning to the last session" width="800">
+</p>
+
+```console
+$ FZF_REVAMPED_SESSION_KEY=S FZF_REVAMPED_LAST_KEY=L fzf-revamped list
+bind-key S display-popup -E -b rounded -w 60% -h 50% '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' session switch
+bind-key M-f display-popup -E -b rounded -w 60% -h 50% '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' palette
+bind-key L run-shell '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' last
+```
+
+Press `prefix M-f` for a palette of common tmux commands. Every other picker, from the session switcher to the broadcast prompt, waits for a key you choose, so installing the whole family produces no key conflict.
 
 ---
 
-## What it does
+## Quick start
 
-Each action opens an fzf list in a tmux popup. Pick an entry and the plugin acts on it: switch to a session, window or pane, kill it, rename it, or create a session that does not exist yet.
+### Prerequisites
 
-| Action | What it does |
-|:-------|:-------------|
-| palette | runs one of 10 tmux commands: `new-window`, both splits, next, previous and last window, `kill-pane`, `kill-window`, `detach-client`, `choose-tree` |
-| session switch | lists sessions with their window count and switches the client |
-| window switch | lists every window in every session and selects it |
-| pane switch | lists every pane with its running command and selects it |
-| session kill | kills the picked session, with no confirmation |
-| tree | sessions, windows and panes in one list, then jumps to the pick |
-| create | switches to the picked session, or creates and switches to one named after the query when nothing matches |
-| URLs | lists the URLs on the visible screen of the current pane and opens the pick with `open` or `xdg-open` |
-| cheatsheet | searches the output of `list-keys` |
-| process | lists processes from `ps`, asks `no` or `yes`, then sends `TERM` to the pick |
-| rename | picks a window, then prompts for its new name |
-| multi-kill | marks several sessions with `Tab`, asks `no` or `yes`, then kills them all |
-| broadcast | prompts for a line of text, marks several panes, then types the text into each one followed by `Enter` |
-| zoxide | lists `zoxide query -l` directories, then attaches or creates a session in the picked one |
-| last | switches the client to the previous session, with no picker |
-| move | picks a window, then prompts for the session to move it to |
+| Tool | Version | Used for |
+|:-----|:--------|:---------|
+| tmux | 3.2 or later for popups | before 3.2 each picker opens in a window; the border needs 3.4 |
+| fzf | any | every picker; `doctor` reports it missing |
+| opener | optional | `open` on macOS or `xdg-open` on Linux, for the URL picker |
+| zoxide | optional | the zoxide picker |
+| gum | optional | the menu, tables and colours of `fzf-revamped`; without it every command prints plain text |
 
-A name created from a query or a directory keeps only the last path component, with `.`, `:` and spaces turned into `_`.
-
-## Requirements
-
-| Requirement | Version or note |
-|:------------|:----------------|
-| tmux | 3.2 or later for the popup; older tmux opens each picker in a new window instead |
-| bash | 3.2 or later, so the macOS `/bin/bash` works |
-| [fzf](https://github.com/junegunn/fzf) | on `PATH` |
-| [zoxide](https://github.com/ajeetdsouza/zoxide), optional | for the zoxide action |
-| Opener, optional | `open` or `xdg-open`, for the URL action |
-
-CI runs the suite on Linux x86_64 and arm64 with GNU and uutils coreutils, and on macOS Apple Silicon and Intel with the system BSD tools, GNU coreutils and uutils coreutils.
-
-## Installation
-
-With [TPM](https://github.com/tmux-plugins/tpm), add the plugin to `~/.tmux.conf` and press `prefix + I`:
+### Install
 
 ```tmux
 set -g @plugin 'tmux-revamped/tmux-fzf-revamped'
 ```
 
-Without TPM, clone the repository and run the entrypoint from `~/.tmux.conf`:
+Then press `prefix + I`. Without TPM, clone the repository and run its entry point from `~/.tmux.conf`:
 
-```sh
+```bash
 git clone https://github.com/tmux-revamped/tmux-fzf-revamped ~/.tmux/plugins/tmux-fzf-revamped
 ```
 
@@ -84,88 +63,176 @@ git clone https://github.com/tmux-revamped/tmux-fzf-revamped ~/.tmux/plugins/tmu
 run-shell ~/.tmux/plugins/tmux-fzf-revamped/fzf-revamped.tmux
 ```
 
+`make install` in the clone also puts `fzf-revamped` in `~/.local/bin`, with its man page and completions under `~/.local/share`.
+
+### Verify
+
+```bash
+~/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped doctor
+```
+
 ## Usage
 
-`prefix + M-f` opens the command palette. Every other action stays unbound until you give it a key. This example replaces the stock `s` and `w` choosers with the fzf pickers and adds a few more:
+Bind the pickers you want, then reload the config or run `fzf-revamped apply`:
 
 ```tmux
-set -g @fzf_revamped_session_key s
-set -g @fzf_revamped_window_key w
-set -g @fzf_revamped_pane_key e
-set -g @fzf_revamped_tree_key T
-set -g @fzf_revamped_create_key C
-set -g @fzf_revamped_last_key L
+set -g @fzf_revamped_session_key 'S'
+set -g @fzf_revamped_window_key 'W'
+set -g @fzf_revamped_last_key 'L'
 ```
 
-In every picker, type to filter, `Enter` to act, and `Esc` to close without acting. With `@fzf_revamped_preview` set to `on`, the switch pickers show the screen of the entry under the cursor below the list.
+`M-f` is this plugin's slot in the family key allocation. When you already bound `prefix M-f` yourself, the plugin leaves it alone and `doctor` says so. A key set to `off` binds nothing. When one key name is invalid, the others are still bound and `apply` exits 1 with tmux's error.
 
-## Configuration
+| Command | What it does |
+|:--------|:-------------|
+| `fzf-revamped apply` | Binds the keys now; the entry point runs it when tmux loads the plugin |
+| `fzf-revamped list` | Prints every binding apply would make; `--json` prints one object |
+| `fzf-revamped` with a picker name | Runs that picker, as its key does; see Pickers |
+| `fzf-revamped doctor` | One row per dependency, a default key someone else holds included |
+| `fzf-revamped version` | The version, then the tmux version |
+| `fzf-revamped help` | The help page; `man fzf-revamped` documents the same commands and settings |
+| `fzf-revamped` | On a terminal, a menu |
 
-| Option | Default | Meaning |
-|:-------|:--------|:--------|
-| `@fzf_revamped_popup_width` | `60%` | popup width |
-| `@fzf_revamped_popup_height` | `50%` | popup height |
-| `@fzf_revamped_popup_border` | `rounded` | popup border on tmux 3.4 and later: `rounded`, `single`, `double`, `heavy`, `simple`, `padded` or `none`; ignored on older tmux |
-| `@fzf_revamped_preview` | unset | `on` or `1` shows a live preview of the pane under the cursor in the switch pickers |
-| `@fzf_revamped_mru` | unset | `on` orders the session list by most recent attach |
+| tmux option | Default | Meaning |
+|:------------|:--------|:--------|
+| `@fzf_revamped_popup_width` | `60%` | Popup width |
+| `@fzf_revamped_popup_height` | `50%` | Popup height |
+| `@fzf_revamped_popup_border` | `rounded` | Popup border on tmux 3.4 and later: `rounded`, `single`, `double`, `heavy`, `simple`, `padded` or `none` |
+| `@fzf_revamped_preview` | `off` | `on` or `1` shows the pane under the cursor in the switch pickers |
+| `@fzf_revamped_mru` | `off` | `on` orders sessions by their last attach |
 
-Every key option in the next section is read once, when the plugin loads.
+Every option is also a command option with dashes, such as `--session-key S`, and an environment variable, such as `FZF_REVAMPED_SESSION_KEY`; the command line wins over the environment, and the environment over the tmux option. An empty tmux option means its default.
 
-### Internal state
+<a id="pickers"></a>
 
-The plugin manages this option itself. Do not set it.
+## Pickers
 
-| Option | Holds |
-|:-------|:------|
-| `@fzf_revamped_broadcast_text` | the text typed at the broadcast prompt, held until the pane picker reads it and then unset |
+| Key option | Command | What it does |
+|:-----------|:--------|:-------------|
+| `@fzf_revamped_palette_key`, `M-f` | `palette` | Runs a tmux command from a short list |
+| `@fzf_revamped_session_key` | `session switch` | Switches to the session picked |
+| `@fzf_revamped_window_key` | `window switch` | Switches to the window picked, in its session |
+| `@fzf_revamped_pane_key` | `pane switch` | Switches to the pane picked |
+| `@fzf_revamped_kill_key` | `session kill` | Kills the session picked |
+| `@fzf_revamped_tree_key` | `tree` | Goes to any session, window or pane |
+| `@fzf_revamped_create_key` | `create` | Switches to a session, or creates one named after what you typed |
+| `@fzf_revamped_url_key` | `urls open` | Opens a URL on the screen; `urls copy` copies it into a tmux buffer |
+| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | Browses every key binding |
+| `@fzf_revamped_process_key` | `process` | Sends TERM, or the signal given, to the process picked, after a yes |
+| `@fzf_revamped_rename_key` | `rename window` | Renames the window picked through a prompt; `rename session` renames a session |
+| `@fzf_revamped_multikill_key` | `multi-kill session` | Kills every session marked with `Tab`, after a yes |
+| `@fzf_revamped_broadcast_key` | `broadcast` | Prompts for text, then types it and `Enter` into every pane marked |
+| `@fzf_revamped_zoxide_key` | `zoxide` | Opens a session at a zoxide folder |
+| `@fzf_revamped_last_key` | `last` | Switches to the last session, with no popup |
+| `@fzf_revamped_move_key` | `move-window move` | Moves the window picked to a session typed at a prompt; `move-window link` links it |
 
-## Key bindings
+`window kill`, `pane kill`, `multi-kill window` and `multi-kill pane` have no key and run from the command line. Every list line carries its target as a hidden first column, so a window named `feature/login` or a session with a space still resolves.
 
-An empty value or `off` leaves an action unbound.
+<a id="screens"></a>
 
-| Option | Default | Action |
-|:-------|:--------|:-------|
-| `@fzf_revamped_palette_key` | `M-f` | palette |
-| `@fzf_revamped_session_key` | unbound | session switch |
-| `@fzf_revamped_window_key` | unbound | window switch |
-| `@fzf_revamped_pane_key` | unbound | pane switch |
-| `@fzf_revamped_kill_key` | unbound | session kill |
-| `@fzf_revamped_tree_key` | unbound | tree |
-| `@fzf_revamped_create_key` | unbound | create |
-| `@fzf_revamped_url_key` | unbound | URLs |
-| `@fzf_revamped_cheatsheet_key` | unbound | cheatsheet |
-| `@fzf_revamped_process_key` | unbound | process |
-| `@fzf_revamped_rename_key` | unbound | rename |
-| `@fzf_revamped_multikill_key` | unbound | multi-kill |
-| `@fzf_revamped_broadcast_key` | unbound | broadcast |
-| `@fzf_revamped_zoxide_key` | unbound | zoxide |
-| `@fzf_revamped_last_key` | unbound | last |
-| `@fzf_revamped_move_key` | unbound | move |
+## Screens
 
-`M-f` is this plugin's slot in the family key allocation. Keeping every other action unbound means installing the whole family produces no key conflict.
+<details>
+<summary>Every screen, recorded inside a real tmux with <code>make screens</code>, with each key on the status line</summary>
+<br>
 
-## How it works
+<table>
+<tr>
+<td width="50%" valign="top"><img src="screens/palette.png" alt="fzf-revamped: prefix M-f opens the palette"><br><sub><code>prefix M-f</code> opens the palette, from <code>hero.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/palette-split.png" alt="fzf-revamped: The palette's split-window -h run"><br><sub>The palette's <code>split-window -h</code> run, from <code>hero.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/sessions.png" alt="fzf-revamped: The session switcher with its preview"><br><sub>The session switcher with its preview, from <code>hero.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/switched.png" alt="fzf-revamped: The client on the picked session"><br><sub>The client on the picked session, from <code>hero.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/last.png" alt="fzf-revamped: The last key returns to the previous session"><br><sub>The last key returns to the previous session, from <code>hero.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/windows.png" alt="fzf-revamped: The window switcher"><br><sub>The window switcher, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/panes.png" alt="fzf-revamped: The pane switcher"><br><sub>The pane switcher, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/tree.png" alt="fzf-revamped: The tree of sessions, windows and panes"><br><sub>The tree of sessions, windows and panes, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/create.png" alt="fzf-revamped: Create or switch, with a new name typed"><br><sub>Create or switch, with a new name typed, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/created.png" alt="fzf-revamped: The new session"><br><sub>The new session, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/urls.png" alt="fzf-revamped: The URLs on the screen"><br><sub>The URLs on the screen, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/cheatsheet.png" alt="fzf-revamped: The cheatsheet filtered to one command"><br><sub>The cheatsheet filtered to one command, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/process.png" alt="fzf-revamped: The process picker"><br><sub>The process picker, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/process-confirm.png" alt="fzf-revamped: The yes or no before the signal"><br><sub>The yes or no before the signal, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/rename.png" alt="fzf-revamped: The rename prompt"><br><sub>The rename prompt, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/kill.png" alt="fzf-revamped: The session killer"><br><sub>The session killer, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/multikill.png" alt="fzf-revamped: Two sessions marked for multi-kill"><br><sub>Two sessions marked for multi-kill, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/broadcast.png" alt="fzf-revamped: Two panes marked for a broadcast"><br><sub>Two panes marked for a broadcast, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/zoxide.png" alt="fzf-revamped: The zoxide folders"><br><sub>The zoxide folders, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped: The move prompt for a window"><br><sub>The move prompt for a window, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped: The menu"><br><sub>The menu, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/doctor.png" alt="fzf-revamped: doctor"><br><sub><code>doctor</code>, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/list.png" alt="fzf-revamped: list"><br><sub><code>list</code>, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/json.png" alt="fzf-revamped: list --json"><br><sub><code>list --json</code>, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/plain-menu.png" alt="fzf-revamped: The menu without gum"><br><sub>The menu without gum, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/plain-apply.png" alt="fzf-revamped: apply from the menu"><br><sub><code>apply</code> from the menu, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/version.png" alt="fzf-revamped: The version"><br><sub>The version, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/error.png" alt="fzf-revamped: An unknown command"><br><sub>An unknown command, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/themes.png" alt="fzf-revamped: The header in six themes"><br><sub>The header in six themes, from <code>themes.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped: The help page"><br><sub>The help page, from <code>help.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/accent.png" alt="fzf-revamped: An accent from FZF_REVAMPED_ACCENT"><br><sub>An accent from <code>FZF_REVAMPED_ACCENT</code>, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"></td>
+</tr>
+</table>
 
-```mermaid
-graph LR
-    A[key press] --> B[display-popup]
-    B --> C[tmux list]
-    C --> D[fzf]
-    D --> E[hidden target id]
-    E --> F[switch, kill, rename or create]
-```
+</details>
 
-The entrypoint [`fzf-revamped.tmux`](fzf-revamped.tmux) checks the tmux version and binds each key to `display-popup -E`, or to `new-window` before tmux 3.2, running [`src/fzf.sh`](src/fzf.sh). Each list line carries the target id as a hidden first column that fzf does not show, so a window named `feature/login` or a session with a space in its name still resolves to the right object. Text typed at the broadcast, rename and move prompts reaches tmux through the quoting `%%%` placeholder, and broadcast types it with `send-keys -l`, so quotes, `$`, `;` and words such as `Enter` arrive as literal text.
+## Portability
+
+The plugin is POSIX `sh`. CI runs every suite on each row below.
+
+| Shell | Status |
+|:------|:-------|
+| `dash`, `/bin/sh` on macOS | Supported |
+| `bash` 3.2 and 5.x, the system's `zsh` and Homebrew's | Supported |
+
+| System | Status |
+|:-------|:-------|
+| macOS | Tahoe on Apple Silicon and Intel, with the tools it ships, Homebrew's GNU tools and Homebrew's uutils |
+| Linux | Ubuntu 26.04 on x86_64 and arm64, with GNU coreutils, uutils and BusyBox |
 
 ## Development
 
 | Command | What it runs |
 |:--------|:-------------|
-| `make test` | the bats suite under [`test/`](test) |
-| `make lint` | shellcheck at warning severity on every shell file |
-| `make coverage` | kcov line coverage on Linux, failing below 95% |
+| `make fmt` | shfmt `-i 2` on every script |
+| `make lint` | shfmt, ShellCheck, mandoc, yamllint and actionlint, at zero findings |
+| `make test` | The bats suites under the system `sh`, every picker on a real tmux server included |
+| `make test-all` | The suites under every installed shell, both builds of bash and zsh on macOS |
+| `make test-linux` | The suites in an Ubuntu container |
+| `make coverage` | bashcov on this Mac and in the Ubuntu container, merged and gated at 100 percent |
+| `make screens` | The screens above, recorded from the real plugin inside tmux with VHS, on macOS |
+| `make install` | The command, its man page and completions under `PREFIX` |
 
-Id parsing, mode and signal validation, version checks and session naming live in [`src/lib/fzf/fzf.sh`](src/lib/fzf/fzf.sh) as pure functions. Every tmux call in [`src/fzf.sh`](src/fzf.sh) goes through one wrapper, so the routing is tested without a tmux server or fzf.
+Commits follow the conventional commit format and go straight to `main`. After a green `ci` run on `main`, `release.yml` runs semantic-release: every `feat` or `fix` since the last tag publishes a release, stamps the version constant and adds the notes to [`CHANGELOG.md`](CHANGELOG.md).
 
 ## License
 

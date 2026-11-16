@@ -2,81 +2,60 @@
 
 # tmux-fzf-revamped
 
-<strong>ポップアップ内の fzf ピッカーから、tmux のセッション、ウィンドウ、ペインの切り替え、終了、名前変更、作成を行います。</strong>
+<strong>ポップアップの fzf ピッカーから、tmux のセッション、ウィンドウ、ペインに切り替え、終了、名前変更、作成を行います。</strong>
 
-[English](README.md) | 日本語 | [简体中文](README.zh-Hans.md) | [繁體中文（香港）](README.zh-HK.md)
+[English](README.md) &nbsp;|&nbsp; 日本語 &nbsp;|&nbsp; [简体中文](README.zh-Hans.md) &nbsp;|&nbsp; [繁體中文（香港）](README.zh-HK.md)
 
-[![family](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/family.yml?branch=main&style=flat-square&label=family)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/family.yml)
-[![tests](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/tests.yml?branch=main&style=flat-square&label=tests)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/tests.yml)
+[![ci](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/ci.yml)
 [![release](https://img.shields.io/github/v/release/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=release)](https://github.com/tmux-revamped/tmux-fzf-revamped/releases/latest)
 [![openssf scorecard](https://img.shields.io/ossf-scorecard/github.com/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/tmux-revamped/tmux-fzf-revamped)
 [![license](https://img.shields.io/github/license/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=license)](LICENSE)
 
 <p align="center">
-  <a href="#できること">できること</a> |
-  <a href="#動作要件">動作要件</a> |
-  <a href="#インストール">インストール</a> |
-  <a href="#使い方">使い方</a> |
-  <a href="#設定">設定</a> |
-  <a href="#キーバインド">キーバインド</a> |
-  <a href="#仕組み">仕組み</a> |
-  <a href="#開発">開発</a>
+  <a href="#クイックスタート"><strong>クイックスタート</strong></a> &nbsp;|&nbsp;
+  <a href="#使い方">使い方</a> &nbsp;|&nbsp;
+  <a href="#ピッカー">ピッカー</a> &nbsp;|&nbsp;
+  <a href="#画面">画面</a>
 </p>
 
 </div>
 
-アクションは **16** 個、デフォルトで割り当て済みのキーは **1** 個、パレットに入っている tmux コマンドは **10** 個です。
+<p align="center">
+  <img src="screens/hero.gif" alt="パレットのコマンドを実行し、ピッカーでセッションを切り替え、前のセッションに戻る fzf-revamped" width="800">
+</p>
+
+```console
+$ FZF_REVAMPED_SESSION_KEY=S FZF_REVAMPED_LAST_KEY=L fzf-revamped list
+bind-key S display-popup -E -b rounded -w 60% -h 50% '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' session switch
+bind-key M-f display-popup -E -b rounded -w 60% -h 50% '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' palette
+bind-key L run-shell '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' last
+```
+
+`prefix M-f` で、よく使う tmux コマンドのパレットが開きます。セッション切り替えからブロードキャストまで、ほかのピッカーは自分で選んだキーで開くので、ファミリー全体を入れてもキーは衝突しません。
 
 ---
 
-## できること
+## クイックスタート
 
-各アクションは tmux のポップアップで fzf のリストを開きます。項目を選ぶとプラグインがそれに対して動作します。セッション、ウィンドウ、ペインへの切り替え、終了、名前変更、まだ存在しないセッションの作成ができます。
+### 前提条件
 
-| アクション | 動作 |
-|:-------|:-------------|
-| palette | 10 個の tmux コマンドのいずれかを実行します：`new-window`、2 種類の分割、次・前・直前のウィンドウ、`kill-pane`、`kill-window`、`detach-client`、`choose-tree` |
-| session switch | セッションをウィンドウ数とともに一覧表示し、クライアントを切り替えます |
-| window switch | すべてのセッションのすべてのウィンドウを一覧表示し、選んだものを選択します |
-| pane switch | すべてのペインを実行中のコマンドとともに一覧表示し、選んだものを選択します |
-| session kill | 選んだセッションを確認なしで終了します |
-| tree | セッション、ウィンドウ、ペインを 1 つのリストにまとめ、選んだものへ移動します |
-| create | 選んだセッションへ切り替えます。一致するものがなければ、クエリの名前でセッションを作成して切り替えます |
-| URLs | 現在のペインの表示画面にある URL を一覧表示し、選んだものを `open` または `xdg-open` で開きます |
-| cheatsheet | `list-keys` の出力を検索します |
-| process | `ps` のプロセスを一覧表示し、`no` か `yes` を確認してから、選んだプロセスに `TERM` を送ります |
-| rename | ウィンドウを選んでから、新しい名前の入力を求めます |
-| multi-kill | `Tab` で複数のセッションに印を付け、`no` か `yes` を確認してから、すべて終了します |
-| broadcast | 1 行のテキストの入力を求め、複数のペインに印を付けてから、各ペインにそのテキストを入力して `Enter` を送ります |
-| zoxide | `zoxide query -l` のディレクトリを一覧表示し、選んだディレクトリでセッションにアタッチするか、新しく作成します |
-| last | ピッカーを使わずに、クライアントを直前のセッションへ切り替えます |
-| move | ウィンドウを選んでから、移動先のセッションの入力を求めます |
+| ツール | バージョン | 用途 |
+|:-----|:--------|:---------|
+| tmux | ポップアップには 3.2 以降 | 3.2 より前はピッカーがウィンドウで開きます。枠線には 3.4 が必要です |
+| fzf | 任意のバージョン | すべてのピッカー。ないときは `doctor` が報告します |
+| オープナー | 任意 | URL ピッカー用。macOS では `open`、Linux では `xdg-open` |
+| zoxide | 任意 | zoxide ピッカー |
+| gum | 任意 | `fzf-revamped` のメニュー、表、色。なくてもすべてのコマンドがプレーンテキストで動きます |
 
-クエリやディレクトリから作るセッション名には、パスの最後の要素だけが使われ、`.`、`:`、空白は `_` に置き換えられます。
-
-## 動作要件
-
-| 要件 | バージョンまたは補足 |
-|:------------|:----------------|
-| tmux | ポップアップには 3.2 以降が必要です。それより古い tmux では各ピッカーが新しいウィンドウで開きます |
-| bash | 3.2 以降。macOS の `/bin/bash` で動作します |
-| [fzf](https://github.com/junegunn/fzf) | `PATH` 上にあること |
-| [zoxide](https://github.com/ajeetdsouza/zoxide)、任意 | zoxide アクションに使います |
-| オープナー、任意 | URL アクションに `open` または `xdg-open` を使います |
-
-CI は、Linux x86_64 と arm64 で GNU coreutils と uutils coreutils を使って、また macOS の Apple Silicon と Intel でシステムの BSD ツール、GNU coreutils、uutils coreutils を使って、テストスイートを実行します。
-
-## インストール
-
-[TPM](https://github.com/tmux-plugins/tpm) を使う場合は、`~/.tmux.conf` にプラグインを追加して `prefix + I` を押します。
+### インストール
 
 ```tmux
 set -g @plugin 'tmux-revamped/tmux-fzf-revamped'
 ```
 
-TPM を使わない場合は、リポジトリをクローンし、`~/.tmux.conf` からエントリポイントを実行します。
+続けて `prefix + I` を押します。TPM を使わない場合は、リポジトリをクローンし、`~/.tmux.conf` からエントリーポイントを実行します。
 
-```sh
+```bash
 git clone https://github.com/tmux-revamped/tmux-fzf-revamped ~/.tmux/plugins/tmux-fzf-revamped
 ```
 
@@ -84,88 +63,176 @@ git clone https://github.com/tmux-revamped/tmux-fzf-revamped ~/.tmux/plugins/tmu
 run-shell ~/.tmux/plugins/tmux-fzf-revamped/fzf-revamped.tmux
 ```
 
+クローンで `make install` を実行すると、`fzf-revamped` が `~/.local/bin` に、manページと補完が `~/.local/share` の下に入ります。
+
+### 確認
+
+```bash
+~/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped doctor
+```
+
 ## 使い方
 
-`prefix + M-f` でコマンドパレットが開きます。ほかのアクションは、キーを割り当てるまで未割り当てのままです。次の例では、標準の `s` と `w` のチューザーを fzf ピッカーに置き換え、いくつかのアクションを追加します。
+使いたいピッカーにキーを割り当て、設定を再読み込みするか `fzf-revamped apply` を実行します。
 
 ```tmux
-set -g @fzf_revamped_session_key s
-set -g @fzf_revamped_window_key w
-set -g @fzf_revamped_pane_key e
-set -g @fzf_revamped_tree_key T
-set -g @fzf_revamped_create_key C
-set -g @fzf_revamped_last_key L
+set -g @fzf_revamped_session_key 'S'
+set -g @fzf_revamped_window_key 'W'
+set -g @fzf_revamped_last_key 'L'
 ```
 
-どのピッカーでも、入力で絞り込み、`Enter` で実行し、`Esc` で何もせずに閉じます。`@fzf_revamped_preview` を `on` にすると、切り替えピッカーのリストの下に、カーソル位置の項目の画面が表示されます。
+`M-f` はファミリーのキー割り当てでこのプラグインの枠です。`prefix M-f` を自分で割り当てているときは、プラグインはそのままにし、`doctor` がそれを報告します。`off` にしたキーは割り当てません。キー名が 1 つ無効でも、ほかのキーは割り当てられ、`apply` は tmux のエラーとともに 1 で終わります。
 
-## 設定
+| コマンド | 動作 |
+|:--------|:-------------|
+| `fzf-revamped apply` | キーを今すぐ割り当てます。プラグインの読み込み時にエントリーポイントが実行します |
+| `fzf-revamped list` | apply が行う割り当てをすべて表示します。`--json` で 1 つのオブジェクトを出力します |
+| ピッカー名付きの `fzf-revamped` | ピッカー名を付けると、キーと同じようにそのピッカーを実行します。ピッカーの節を参照 |
+| `fzf-revamped doctor` | 依存関係ごとに 1 行。ほかの誰かが使っている既定キーも含みます |
+| `fzf-revamped version` | バージョンと tmux のバージョン |
+| `fzf-revamped help` | ヘルプ。`man fzf-revamped` にも同じコマンドと設定があります |
+| `fzf-revamped` | 端末ではメニュー |
 
-| オプション | デフォルト | 意味 |
-|:-------|:--------|:--------|
+| tmux オプション | 既定値 | 意味 |
+|:------------|:--------|:--------|
 | `@fzf_revamped_popup_width` | `60%` | ポップアップの幅 |
 | `@fzf_revamped_popup_height` | `50%` | ポップアップの高さ |
-| `@fzf_revamped_popup_border` | `rounded` | tmux 3.4 以降でのポップアップの枠線：`rounded`、`single`、`double`、`heavy`、`simple`、`padded`、`none`。古い tmux では無視されます |
-| `@fzf_revamped_preview` | 未設定 | `on` または `1` にすると、切り替えピッカーでカーソル位置のペインをライブでプレビューします |
-| `@fzf_revamped_mru` | 未設定 | `on` にすると、セッションの一覧を最後にアタッチした順に並べます |
+| `@fzf_revamped_popup_border` | `rounded` | tmux 3.4 以降のポップアップの枠線。`rounded`、`single`、`double`、`heavy`、`simple`、`padded`、`none` |
+| `@fzf_revamped_preview` | `off` | `on` か `1` で、切り替えピッカーにカーソル下のペインを表示します |
+| `@fzf_revamped_mru` | `off` | `on` でセッションを最後に接続した順に並べます |
 
-次のセクションのキーオプションは、プラグインの読み込み時に 1 回だけ読まれます。
+どのオプションも、ダッシュ区切りのコマンドオプション（例 `--session-key S`）と環境変数（例 `FZF_REVAMPED_SESSION_KEY`）で指定できます。優先順位はコマンドライン、環境変数、tmux オプションの順です。空の tmux オプションは既定値を意味します。
 
-### 内部状態
+<a id="ピッカー"></a>
 
-このオプションはプラグイン自身が管理します。設定しないでください。
+## ピッカー
 
-| オプション | 保持する内容 |
-|:-------|:------|
-| `@fzf_revamped_broadcast_text` | broadcast のプロンプトで入力したテキスト。ペインピッカーが読み取るまで保持し、その後に削除されます |
+| キーのオプション | コマンド | 動作 |
+|:-----------|:--------|:-------------|
+| `@fzf_revamped_palette_key`、`M-f` | `palette` | 短い一覧から tmux コマンドを実行します |
+| `@fzf_revamped_session_key` | `session switch` | 選んだセッションに切り替えます |
+| `@fzf_revamped_window_key` | `window switch` | 選んだウィンドウに、そのセッションごと切り替えます |
+| `@fzf_revamped_pane_key` | `pane switch` | 選んだペインに切り替えます |
+| `@fzf_revamped_kill_key` | `session kill` | 選んだセッションを終了します |
+| `@fzf_revamped_tree_key` | `tree` | 任意のセッション、ウィンドウ、ペインに移動します |
+| `@fzf_revamped_create_key` | `create` | セッションに切り替えるか、入力した名前で作成します |
+| `@fzf_revamped_url_key` | `urls open` | 画面上の URL を開きます。`urls copy` は tmux のバッファーにコピーします |
+| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | すべてのキー割り当てを表示します |
+| `@fzf_revamped_process_key` | `process` | 選んだプロセスに、確認後 TERM か指定したシグナルを送ります |
+| `@fzf_revamped_rename_key` | `rename window` | 選んだウィンドウの名前をプロンプトで変えます。`rename session` はセッションの名前を変えます |
+| `@fzf_revamped_multikill_key` | `multi-kill session` | `Tab` で選んだすべてのセッションを、確認後に終了します |
+| `@fzf_revamped_broadcast_key` | `broadcast` | テキストを入力させ、選んだすべてのペインに入力して `Enter` を送ります |
+| `@fzf_revamped_zoxide_key` | `zoxide` | zoxide のフォルダーでセッションを開きます |
+| `@fzf_revamped_last_key` | `last` | ポップアップなしで前のセッションに切り替えます |
+| `@fzf_revamped_move_key` | `move-window move` | 選んだウィンドウを、プロンプトで入力したセッションに移動します。`move-window link` はリンクします |
 
-## キーバインド
+`window kill`、`pane kill`、`multi-kill window`、`multi-kill pane` にはキーがなく、コマンドラインから実行します。一覧の各行は対象を隠れた先頭列に持つので、`feature/login` という名前のウィンドウや空白を含むセッションも正しく選べます。
 
-値が空または `off` の場合、そのアクションは割り当てられません。
+<a id="画面"></a>
 
-| オプション | デフォルト | アクション |
-|:-------|:--------|:-------|
-| `@fzf_revamped_palette_key` | `M-f` | palette |
-| `@fzf_revamped_session_key` | 未割り当て | session switch |
-| `@fzf_revamped_window_key` | 未割り当て | window switch |
-| `@fzf_revamped_pane_key` | 未割り当て | pane switch |
-| `@fzf_revamped_kill_key` | 未割り当て | session kill |
-| `@fzf_revamped_tree_key` | 未割り当て | tree |
-| `@fzf_revamped_create_key` | 未割り当て | create |
-| `@fzf_revamped_url_key` | 未割り当て | URLs |
-| `@fzf_revamped_cheatsheet_key` | 未割り当て | cheatsheet |
-| `@fzf_revamped_process_key` | 未割り当て | process |
-| `@fzf_revamped_rename_key` | 未割り当て | rename |
-| `@fzf_revamped_multikill_key` | 未割り当て | multi-kill |
-| `@fzf_revamped_broadcast_key` | 未割り当て | broadcast |
-| `@fzf_revamped_zoxide_key` | 未割り当て | zoxide |
-| `@fzf_revamped_last_key` | 未割り当て | last |
-| `@fzf_revamped_move_key` | 未割り当て | move |
+## 画面
 
-`M-f` は、ファミリーのキー割り当てにおけるこのプラグインの枠です。ほかのアクションをすべて未割り当てにしているので、ファミリー全体をインストールしてもキーは衝突しません。
+<details>
+<summary>すべての画面。本物の tmux の中で <code>make screens</code> で録画し、押したキーをステータスラインに表示しています</summary>
+<br>
 
-## 仕組み
+<table>
+<tr>
+<td width="50%" valign="top"><img src="screens/palette.png" alt="fzf-revamped: prefix M-f でパレットを開く"><br><sub><code>prefix M-f</code> でパレットを開く。<code>hero.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/palette-split.png" alt="fzf-revamped: パレットの split-window -h を実行"><br><sub>パレットの <code>split-window -h</code> を実行。<code>hero.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/sessions.png" alt="fzf-revamped: プレビュー付きのセッション切り替え"><br><sub>プレビュー付きのセッション切り替え。<code>hero.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/switched.png" alt="fzf-revamped: 選んだセッションに移ったクライアント"><br><sub>選んだセッションに移ったクライアント。<code>hero.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/last.png" alt="fzf-revamped: last キーで前のセッションに戻る"><br><sub>last キーで前のセッションに戻る。<code>hero.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/windows.png" alt="fzf-revamped: ウィンドウ切り替え"><br><sub>ウィンドウ切り替え。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/panes.png" alt="fzf-revamped: ペイン切り替え"><br><sub>ペイン切り替え。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/tree.png" alt="fzf-revamped: セッション、ウィンドウ、ペインのツリー"><br><sub>セッション、ウィンドウ、ペインのツリー。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/create.png" alt="fzf-revamped: 新しい名前を入力した作成または切り替え"><br><sub>新しい名前を入力した作成または切り替え。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/created.png" alt="fzf-revamped: 新しいセッション"><br><sub>新しいセッション。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/urls.png" alt="fzf-revamped: 画面上の URL"><br><sub>画面上の URL。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/cheatsheet.png" alt="fzf-revamped: 1 つのコマンドに絞ったチートシート"><br><sub>1 つのコマンドに絞ったチートシート。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/process.png" alt="fzf-revamped: プロセスピッカー"><br><sub>プロセスピッカー。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/process-confirm.png" alt="fzf-revamped: シグナルの前の確認"><br><sub>シグナルの前の確認。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/rename.png" alt="fzf-revamped: 名前変更のプロンプト"><br><sub>名前変更のプロンプト。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/kill.png" alt="fzf-revamped: セッション終了"><br><sub>セッション終了。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/multikill.png" alt="fzf-revamped: マルチキルで選んだ 2 つのセッション"><br><sub>マルチキルで選んだ 2 つのセッション。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/broadcast.png" alt="fzf-revamped: ブロードキャストで選んだ 2 つのペイン"><br><sub>ブロードキャストで選んだ 2 つのペイン。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/zoxide.png" alt="fzf-revamped: zoxide のフォルダー"><br><sub>zoxide のフォルダー。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped: ウィンドウ移動のプロンプト"><br><sub>ウィンドウ移動のプロンプト。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped: メニュー"><br><sub>メニュー。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/doctor.png" alt="fzf-revamped: doctor"><br><sub><code>doctor</code>。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/list.png" alt="fzf-revamped: list"><br><sub><code>list</code>。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/json.png" alt="fzf-revamped: list --json"><br><sub><code>list --json</code>。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/plain-menu.png" alt="fzf-revamped: gum なしのメニュー"><br><sub>gum なしのメニュー。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/plain-apply.png" alt="fzf-revamped: メニューからの apply"><br><sub>メニューからの <code>apply</code>。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/version.png" alt="fzf-revamped: バージョン"><br><sub>バージョン。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/error.png" alt="fzf-revamped: 不明なコマンド"><br><sub>不明なコマンド。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/themes.png" alt="fzf-revamped: 6 つのテーマのヘッダー"><br><sub>6 つのテーマのヘッダー。<code>themes.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped: ヘルプ"><br><sub>ヘルプ。<code>help.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/accent.png" alt="fzf-revamped: FZF_REVAMPED_ACCENT によるアクセント"><br><sub><code>FZF_REVAMPED_ACCENT</code> によるアクセント。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"></td>
+</tr>
+</table>
 
-```mermaid
-graph LR
-    A[キー入力] --> B[display-popup]
-    B --> C[tmux の一覧]
-    C --> D[fzf]
-    D --> E[隠れたターゲット ID]
-    E --> F[切り替え、終了、名前変更、作成]
-```
+</details>
 
-エントリポイント [`fzf-revamped.tmux`](fzf-revamped.tmux) は tmux のバージョンを確認し、各キーを `display-popup -E` に割り当てます。tmux 3.2 より前では `new-window` に割り当て、どちらも [`src/fzf.sh`](src/fzf.sh) を実行します。リストの各行は、fzf に表示されない先頭列としてターゲット ID を持っています。そのため、`feature/login` という名前のウィンドウや、名前に空白を含むセッションでも、正しい対象に解決されます。broadcast、rename、move のプロンプトに入力したテキストは、クォートを行う `%%%` プレースホルダーを通って tmux に渡ります。broadcast はそれを `send-keys -l` で入力するので、引用符、`$`、`;`、`Enter` のような単語も文字どおりに届きます。
+## 移植性
+
+プラグインは POSIX `sh` です。CI は下の各行ですべてのテストを実行します。
+
+| シェル | 状態 |
+|:------|:-------|
+| `dash`、macOS の `/bin/sh` | 対応 |
+| `bash` 3.2 と 5.x、システムの `zsh` と Homebrew の `zsh` | 対応 |
+
+| システム | 状態 |
+|:-------|:-------|
+| macOS | Apple Silicon と Intel の Tahoe。付属のツール、Homebrew の GNU ツール、Homebrew の uutils で確認 |
+| Linux | x86_64 と arm64 の Ubuntu 26.04。GNU coreutils、uutils、BusyBox で確認 |
 
 ## 開発
 
 | コマンド | 実行内容 |
 |:--------|:-------------|
-| `make test` | [`test/`](test) 以下の bats スイート |
-| `make lint` | すべてのシェルファイルに対する warning レベルの shellcheck |
-| `make coverage` | Linux 上の kcov による行カバレッジ。95% 未満で失敗します |
+| `make fmt` | すべてのスクリプトに shfmt `-i 2` をかけます |
+| `make lint` | shfmt、ShellCheck、mandoc、yamllint、actionlint を、指摘ゼロで通します |
+| `make test` | システムの `sh` で bats のテスト |
+| `make test-all` | インストール済みのすべてのシェルでテスト。macOS では bash と zsh の両方のビルドを含みます |
+| `make test-linux` | Ubuntu のコンテナでテスト |
+| `make coverage` | この Mac と Ubuntu のコンテナで bashcov を実行し、合算して 100 パーセントで判定します |
+| `make screens` | 上の画面を、本物のプラグインから tmux の中で VHS で録画します。macOS で実行します |
+| `make install` | コマンド、manページ、補完を `PREFIX` の下に置きます |
 
-ID の解析、モードとシグナルの検証、バージョンの確認、セッション名の生成は、[`src/lib/fzf/fzf.sh`](src/lib/fzf/fzf.sh) に純粋関数として置かれています。[`src/fzf.sh`](src/fzf.sh) の tmux 呼び出しはすべて 1 つのラッパーを通るので、tmux サーバーや fzf なしでルーティングをテストできます。
+コミットは Conventional Commits の形式に従い、そのまま `main` に入ります。`main` で `ci` が成功すると、`release.yml` が semantic-release を実行します。前回のタグ以降に `feat` か `fix` があればリリースを公開し、バージョン定数を更新し、変更内容を [`CHANGELOG.md`](CHANGELOG.md) に追加します。
 
 ## ライセンス
 

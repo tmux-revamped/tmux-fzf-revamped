@@ -1,0 +1,3 @@
+$ fzf-revamped
+fzf-revamped: no command given. run 'fzf-revamped help' for usage.
+exit 1

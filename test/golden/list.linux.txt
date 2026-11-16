@@ -1,0 +1,4 @@
+$ fzf-revamped list
+bind-key s display-popup -E -b rounded -w 60% -h 50% '<path> session switch
+bind-key M-f display-popup -E -b rounded -w 60% -h 50% '<path> palette
+exit 0

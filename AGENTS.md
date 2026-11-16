@@ -8,50 +8,46 @@ Guidance for anyone, human or agent, changing tmux-fzf-revamped. What it is and 
 
 | Path | Holds |
 |:-----|:------|
-| [`fzf-revamped.tmux`](fzf-revamped.tmux) | The entry point TPM runs |
-| [`src/fzf.sh`](src/fzf.sh) | The script the entry point and the keys call |
-| [`src/lib/fzf/`](src/lib/fzf) | This member's modules |
-| [`src/lib/utils/constants.sh`](src/lib/utils/constants.sh) | This member's constants, including its version |
-| [`src/lib/utils/`](src/lib/utils), [`src/lib/tmux/`](src/lib/tmux) | The shared library. Every file there except `constants.sh` is identical in every member |
-| [`test/`](test) | The bats suite. `helpers.bash` and `tmux_helpers.bash` are identical in every member; this member's own mocks go in the `_local` files |
+| [`fzf-revamped.tmux`](fzf-revamped.tmux) | The entry point TPM runs: it runs `bin/fzf-revamped apply` |
+| [`bin/fzf-revamped`](bin/fzf-revamped) | The command: `apply`, `list`, every picker, `preview`, `doctor`, `version`, `help` and the menu. `apply` and the pickers run without loading the interface modules |
+| [`lib/fzf.sh`](lib/fzf.sh) | Reading the settings, the binding plan, the target lists and every picker |
+| [`lib/state.sh`](lib/state.sh) | Every global, including `FZF_REVAMPED_SETTINGS`, the table of setting names and defaults the rest reads |
+| [`lib/core.sh`](lib/core.sh) | The version |
+| [`lib/`](lib) | Every other file is the shared library, identical in every member |
+| [`test/fzf.bats`](test/fzf.bats), [`test/commands.bats`](test/commands.bats), [`test/entrypoint.bats`](test/entrypoint.bats) | This member's suites: the helpers and the plan through stubs, the commands, and every picker on a private tmux server with a client attached from a second tmux |
+| [`screens/`](screens) | The tapes and the recording's tmux config |
 
 ## Names
 
-- Settings are tmux options named `@fzf_revamped_<setting>`.
+- Settings are the tmux options `@fzf_revamped_<setting>` listed in `FZF_REVAMPED_SETTINGS`, the long options with dashes, such as `--session-key`, and the environment variables `FZF_REVAMPED_<SETTING>`.
+- The broadcast key's prompt writes `@fzf_revamped_broadcast_text`, which `broadcast` reads and clears; it is state, never a setting.
 - It has no status placeholders.
-- Public functions carry `fzf_`; private ones start with `_`.
 - The version constant is `FZF_REVAMPED_VERSION`.
-- Its command-line tool, once it exists, is `fzf-revamped`.
+- The command's own functions and the library's never share a name, because the command is sourced after the library and would replace it.
 
 ## Behaviour
 
-- Switches to, kills, renames or creates sessions, windows and panes from fzf pickers in a popup.
-- `M-f` opens the picker menu.
-- The entry point checks the tmux version and binds each key to `display-popup -E`, or to `new-window` before tmux 3.2, running [`src/fzf.sh`](src/fzf.sh).
+- `apply` reads every setting with one `tmux display-message` call and one `env` read, reads `list-keys -T prefix` once for the palette key, builds the plan, and sends every binding to tmux in one call. When that call fails, it sends each binding alone, so one invalid key leaves the others bound and `apply` exits 1 with tmux's error.
+- A picker key opens `display-popup -E` on tmux 3.2 and later, with a `-b` border on 3.4 and later, and `new-window` before 3.2; the last key runs `run-shell` with no popup.
+- A key set to `off` binds nothing, an empty one means its default, and a palette key the person bound before the plugin loaded stays theirs and is reported by `doctor`.
+- The pickers read the settings when they run, so `preview` and `mru` need no reload.
+- The entry point clears every inherited `REVAMPED_` variable except the test switches, and every `FZF_REVAMPED_*_LOADED` guard; every other global is assigned outright in the state file.
 
 ## Domain rules
 
-- Each list line carries the target id as a hidden first column that fzf does not show, so a window named `feature/login` or a session with a space in its name still resolves to the right target.
+- Every list line carries its target as a hidden first column read with `--delimiter` and `--with-nth 2`, so a window named `feature/login` or a session with a space still resolves.
+- Window and pane switches run `switch-client` and then the select as separate calls, so the select still happens when there is no client to switch.
+- Process and multi-kill ask for a `yes` in fzf before they act.
+- Rename and move-window ask for the name or the session on the popup's own terminal, then run the tmux command themselves: a `command-prompt` started inside a popup never receives the keys typed, so it would change nothing. Without a terminal they stop with the usage hint before picking.
+- Broadcast types the text with `send-keys -l`, then `Enter`, into each marked pane.
 
 ## Release
 
-- `FZF_REVAMPED_VERSION` in [`src/lib/utils/constants.sh`](src/lib/utils/constants.sh) holds the version. It must equal the newest versioned heading in [`CHANGELOG.md`](CHANGELOG.md) and the README's version badge, which the `version` job in `tests.yml` checks.
-- A push to `main` whose version has no tag yet makes the `release` job in `tests.yml` tag `vX.Y.Z` and publish a GitHub release with that changelog section.
-- Unreleased changes sit under `## [Unreleased]` in [`CHANGELOG.md`](CHANGELOG.md) until a release is cut.
+- `FZF_REVAMPED_VERSION` in [`lib/core.sh`](lib/core.sh) holds the version. Nobody edits it by hand.
+- After a green `ci` run on `main`, [`release.yml`](.github/workflows/release.yml) runs semantic-release: a `feat` or `fix` since the last tag publishes a release, [`set-version.sh`](.github/scripts/set-version.sh) stamps the constant, and the notes go into [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Gaps against FAMILY.md
 
-As of 2026-11-15:
+As of 2026-11-16:
 
-- Every script is bash, under `#!/usr/bin/env bash`, not POSIX `sh`, so it is untested under `dash`, `zsh` and BusyBox `sh`.
-- The code lives in [`src/`](src) and [`src/lib/`](src/lib); there is no `bin/fzf-revamped`, `lib/state.sh` or `lib/core.sh`.
-- No `fzf-revamped` command with `help`, `version` and `doctor` in the family's form, no man page, no completions and no `manifest.json`.
-- No gum interface: no `lib/ui.sh`, `lib/table.awk`, themes or `test/bin/gum`.
-- No `screens/`: no VHS recording of each feature, no on-screen caption of the keys each recording presses, and no recordings in the README.
-- The README sections are not the family's order of Quick start, Usage, topic sections, Portability, Development and License.
-- Coverage is kcov with a 95 percent floor on Linux, not bashcov at 100 percent merged from macOS and Linux.
-- CI tests GNU, BSD and uutils tools in `tests.yml`, but not the six toolsets through `.github/scripts/toolset.sh`, and no shell matrix under `sh`, `dash`, `bash` and `zsh`.
-- No golden transcripts, `call.sh`, `run-matrix.sh` or `linux-container.sh`.
-- The version is written by hand and released by `tests.yml`; there is no semantic-release, `package.json`, `release.yml` with `recover`, `bot-merge.yml` or Renovate.
-- CI is `tests.yml` and `security.yml`, not `ci.yml`, and no job starts with `step-security/harden-runner`.
-- No `.editorconfig`, `.yamllint.yml` or shfmt; the Makefile has `help`, `test`, `test-unit`, `coverage`, `lint` and `clean`, not the family's targets.
+- Only `prefix M-f` and the rename key are pressed through a real client in a test; the other picker keys are checked as bindings and their commands called directly.

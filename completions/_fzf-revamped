@@ -1,0 +1,60 @@
+#compdef fzf-revamped
+
+_fzf_revamped() {
+  local -a commands
+  commands=(
+    'apply:bind the keys now'
+    'list:print every binding apply would make'
+    'session:switch to or kill a session'
+    'window:switch to or kill a window'
+    'pane:switch to or kill a pane'
+    'tree:pick any session, window or pane'
+    'create:switch to or create a session'
+    'urls:open or copy a URL on the screen'
+    'palette:run a tmux command'
+    'cheatsheet:browse every key binding'
+    'process:signal a process'
+    'rename:rename a session or window'
+    'multi-kill:kill several'
+    'broadcast:type text into several panes'
+    'zoxide:open a session at a zoxide folder'
+    'last:switch to the last session'
+    'move-window:move or link a window'
+    'preview:print a pane'
+    'doctor:check this machine'
+    'version:print the version'
+    'help:print the help page'
+  )
+
+  _arguments \
+    '--json[list prints one JSON object]' \
+    '--theme[colours of the terminal interface]:theme:(kodougu catppuccin-mocha catppuccin-latte dracula nord gruvbox tokyo-night mono)' \
+    '--palette-key[key of the palette]:value:' \
+    '--session-key[key of the session]:value:' \
+    '--window-key[key of the window]:value:' \
+    '--pane-key[key of the pane]:value:' \
+    '--kill-key[key of the kill]:value:' \
+    '--tree-key[key of the tree]:value:' \
+    '--create-key[key of the create]:value:' \
+    '--url-key[key of the url]:value:' \
+    '--cheatsheet-key[key of the cheatsheet]:value:' \
+    '--process-key[key of the process]:value:' \
+    '--rename-key[key of the rename]:value:' \
+    '--multikill-key[key of the multi-kill]:value:' \
+    '--broadcast-key[key of the broadcast]:value:' \
+    '--zoxide-key[key of the zoxide]:value:' \
+    '--last-key[key of the last]:value:' \
+    '--move-key[key of the move]:value:' \
+    '--popup-width[popup width]:value:' \
+    '--popup-height[popup height]:value:' \
+    '--popup-border[popup border]:value:(rounded single double heavy simple padded none)' \
+    '--preview[preview the pane]:value:(on off)' \
+    '--mru[sessions by last attach]:value:(on off)' \
+    '1:command:->command'
+
+  if [[ "${state}" == command ]]; then
+    _describe 'command' commands
+  fi
+}
+
+_fzf_revamped "$@"

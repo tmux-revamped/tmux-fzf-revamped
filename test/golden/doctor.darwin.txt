@@ -1,0 +1,14 @@
+$ fzf-revamped doctor
+tmux               ok       <path>, 3.8
+fzf                ok       <path>
+opener             warn     urls open needs xdg-open or open
+zoxide             warn     the zoxide picker needs zoxide
+gum                ok       <path>
+awk                ok       <path>, <flavor>
+sed                ok       <path>, <flavor>
+grep               ok       <path>, <flavor>
+tr                 ok       <path>, <flavor>
+sort               ok       <path>, <flavor>
+cut                ok       <path>, <flavor>
+ps                 ok       <path>, <flavor>
+exit 0

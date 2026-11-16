@@ -1,0 +1,86 @@
+$ fzf-revamped help
+fzf-revamped - switch, kill, rename or create sessions, windows and panes in fzf
+
+usage:
+  fzf-revamped apply                 bind the keys now
+  fzf-revamped list                  print every binding apply would make
+  fzf-revamped palette               run a tmux command from a short list
+  fzf-revamped session|window|pane [switch|kill]
+                                     switch to or kill the one picked
+  fzf-revamped tree                  pick any session, window or pane
+  fzf-revamped create                switch to a session, or create one
+                                     named after what was typed
+  fzf-revamped urls [open|copy]      open a URL on the screen, or copy it
+                                     into a tmux buffer
+  fzf-revamped cheatsheet            browse every key binding
+  fzf-revamped process [SIGNAL]      send a signal to a process, TERM by
+                                     default, after a confirmation
+  fzf-revamped rename [session|window]
+                                     rename the one picked
+  fzf-revamped multi-kill [session|window|pane]
+                                     kill several, after a confirmation
+  fzf-revamped broadcast [TEXT]      type TEXT and Enter into every pane
+                                     picked
+  fzf-revamped zoxide                open a session at a zoxide folder
+  fzf-revamped last                  switch to the last session
+  fzf-revamped move-window [move|link]
+                                     move or link a window to a session
+  fzf-revamped preview TARGET        print a pane, for the switch preview
+  fzf-revamped doctor                check this machine
+  fzf-revamped version               print the version
+  fzf-revamped help                  print this page
+
+options:
+  --json           list prints one JSON object
+  --theme NAME     the look: kodougu, catppuccin-mocha, catppuccin-latte,
+                   dracula, nord, gruvbox, tokyo-night or mono
+  --SETTING VALUE  any tmux option below, named with dashes, such as
+                   --session-key s or --mru on
+
+environment:
+  FZF_REVAMPED_SETTING  any tmux option below in capitals, such as
+                        FZF_REVAMPED_MRU
+  FZF_REVAMPED_THEME    the look, when --theme is not given
+  FZF_REVAMPED_ACCENT   a colour such as #CBA6F7 for the accent
+  KODOUGU_THEME         the family look, when neither is given
+  KODOUGU_ACCENT        the family accent, when the tool's is unset
+  NO_COLOR              turn colour off
+
+tmux options:
+  @fzf_revamped_palette_key     key of the palette; off for none (M-f)
+  @fzf_revamped_session_key     key of the session switcher (unbound)
+  @fzf_revamped_window_key      key of the window switcher (unbound)
+  @fzf_revamped_pane_key        key of the pane switcher (unbound)
+  @fzf_revamped_kill_key        key of the session killer (unbound)
+  @fzf_revamped_tree_key        key of the tree (unbound)
+  @fzf_revamped_create_key      key of create or switch (unbound)
+  @fzf_revamped_url_key         key of the URL opener (unbound)
+  @fzf_revamped_cheatsheet_key  key of the cheatsheet (unbound)
+  @fzf_revamped_process_key     key of the process signaller (unbound)
+  @fzf_revamped_rename_key      key of the window renamer (unbound)
+  @fzf_revamped_multikill_key   key of the session multi-kill (unbound)
+  @fzf_revamped_broadcast_key   key of the broadcast prompt (unbound)
+  @fzf_revamped_zoxide_key      key of the zoxide sessions (unbound)
+  @fzf_revamped_last_key        key of the last session (unbound)
+  @fzf_revamped_move_key        key of the window mover (unbound)
+  @fzf_revamped_popup_width     popup width (60%)
+  @fzf_revamped_popup_height    popup height (50%)
+  @fzf_revamped_popup_border    rounded, single, double, heavy, simple,
+                                padded or none, on tmux 3.4 (rounded)
+  @fzf_revamped_preview         on shows the pane under the cursor (off)
+  @fzf_revamped_mru             on orders sessions by last attach (off)
+  @revamped_theme               the family look (kodougu)
+
+notes:
+  The entry point runs apply once when tmux loads the plugin, and every
+  binding goes to tmux in one call. A key opens a popup, or a window before
+  tmux 3.2, that runs one of the commands above. Every list line carries the
+  target as a hidden first column, so a name with a space or a slash still
+  resolves. The broadcast prompt keeps its text in
+  @fzf_revamped_broadcast_text until the pane picker reads it.
+
+examples:
+  fzf-revamped list
+  fzf-revamped --session-key s apply
+  fzf-revamped doctor
+exit 0

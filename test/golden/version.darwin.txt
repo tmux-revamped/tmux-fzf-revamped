@@ -1,0 +1,4 @@
+$ fzf-revamped version
+fzf-revamped <version>
+tmux: 3.8
+exit 0

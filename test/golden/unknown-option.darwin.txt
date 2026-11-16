@@ -1,0 +1,3 @@
+$ fzf-revamped --frobnicate
+fzf-revamped: unknown option '--frobnicate'. run 'fzf-revamped help' for usage.
+exit 1

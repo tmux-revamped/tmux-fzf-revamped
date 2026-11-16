@@ -2,81 +2,60 @@
 
 # tmux-fzf-revamped
 
-<strong>在弹出窗口中的 fzf 选择器里切换、关闭、重命名或创建 tmux 会话、窗口和窗格。</strong>
+<strong>在弹出窗口的 fzf 选择器中切换、关闭、重命名或创建 tmux 会话、窗口和窗格。</strong>
 
-[English](README.md) | [日本語](README.ja.md) | 简体中文 | [繁體中文（香港）](README.zh-HK.md)
+[English](README.md) &nbsp;|&nbsp; [日本語](README.ja.md) &nbsp;|&nbsp; 简体中文 &nbsp;|&nbsp; [繁體中文（香港）](README.zh-HK.md)
 
-[![family](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/family.yml?branch=main&style=flat-square&label=family)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/family.yml)
-[![tests](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/tests.yml?branch=main&style=flat-square&label=tests)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/tests.yml)
+[![ci](https://img.shields.io/github/actions/workflow/status/tmux-revamped/tmux-fzf-revamped/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/tmux-revamped/tmux-fzf-revamped/actions/workflows/ci.yml)
 [![release](https://img.shields.io/github/v/release/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=release)](https://github.com/tmux-revamped/tmux-fzf-revamped/releases/latest)
 [![openssf scorecard](https://img.shields.io/ossf-scorecard/github.com/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/tmux-revamped/tmux-fzf-revamped)
 [![license](https://img.shields.io/github/license/tmux-revamped/tmux-fzf-revamped?style=flat-square&label=license)](LICENSE)
 
 <p align="center">
-  <a href="#功能">功能</a> |
-  <a href="#环境要求">环境要求</a> |
-  <a href="#安装">安装</a> |
-  <a href="#用法">用法</a> |
-  <a href="#配置">配置</a> |
-  <a href="#按键绑定">按键绑定</a> |
-  <a href="#工作原理">工作原理</a> |
-  <a href="#开发">开发</a>
+  <a href="#快速开始"><strong>快速开始</strong></a> &nbsp;|&nbsp;
+  <a href="#用法">用法</a> &nbsp;|&nbsp;
+  <a href="#选择器">选择器</a> &nbsp;|&nbsp;
+  <a href="#界面">界面</a>
 </p>
 
 </div>
 
-共 **16** 个操作，默认绑定 **1** 个，命令面板中有 **10** 条 tmux 命令。
+<p align="center">
+  <img src="screens/hero.gif" alt="fzf-revamped 运行命令面板中的命令，在选择器中切换会话，再回到上一个会话" width="800">
+</p>
+
+```console
+$ FZF_REVAMPED_SESSION_KEY=S FZF_REVAMPED_LAST_KEY=L fzf-revamped list
+bind-key S display-popup -E -b rounded -w 60% -h 50% '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' session switch
+bind-key M-f display-popup -E -b rounded -w 60% -h 50% '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' palette
+bind-key L run-shell '/home/user/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped' last
+```
+
+按下 `prefix M-f` 打开常用 tmux 命令的面板。其他选择器，从会话切换到广播提示，都等待你自己选择的按键，所以安装整个家族也不会产生按键冲突。
 
 ---
 
-## 功能
+## 快速开始
 
-每个操作都会在 tmux 弹出窗口中打开一个 fzf 列表。选中一项后，插件对它执行操作：切换到某个会话、窗口或窗格，关闭它，重命名它，或者创建一个尚不存在的会话。
+### 前提条件
 
-| 操作 | 作用 |
-|:-------|:-------------|
-| palette | 运行 10 条 tmux 命令之一：`new-window`、两种分割、下一个、上一个和最近的窗口、`kill-pane`、`kill-window`、`detach-client`、`choose-tree` |
-| session switch | 列出会话及其窗口数，并切换客户端 |
-| window switch | 列出所有会话中的所有窗口，并选中所选窗口 |
-| pane switch | 列出所有窗格及其正在运行的命令，并选中所选窗格 |
-| session kill | 关闭所选会话，不需要确认 |
-| tree | 把会话、窗口和窗格放在一个列表中，然后跳转到所选项 |
-| create | 切换到所选会话；没有匹配项时，以查询文本命名创建一个会话并切换过去 |
-| URLs | 列出当前窗格可见屏幕上的 URL，并用 `open` 或 `xdg-open` 打开所选项 |
-| cheatsheet | 搜索 `list-keys` 的输出 |
-| process | 列出 `ps` 中的进程，询问 `no` 或 `yes`，然后向所选进程发送 `TERM` |
-| rename | 选择一个窗口，然后提示输入新名称 |
-| multi-kill | 用 `Tab` 标记多个会话，询问 `no` 或 `yes`，然后全部关闭 |
-| broadcast | 提示输入一行文本，标记多个窗格，然后在每个窗格中输入该文本并按 `Enter` |
-| zoxide | 列出 `zoxide query -l` 的目录，然后在所选目录中连接或创建会话 |
-| last | 不打开选择器，直接把客户端切换到上一个会话 |
-| move | 选择一个窗口，然后提示输入要移动到的会话 |
+| 工具 | 版本 | 用途 |
+|:-----|:--------|:---------|
+| tmux | 弹出窗口需要 3.2 或更高 | 3.2 之前每个选择器在窗口中打开；边框需要 3.4 |
+| fzf | 任意版本 | 所有选择器；缺少时 `doctor` 会报告 |
+| 打开工具 | 可选 | 用于 URL 选择器：macOS 上的 `open`，Linux 上的 `xdg-open` |
+| zoxide | 可选 | zoxide 选择器 |
+| gum | 可选 | `fzf-revamped` 的菜单、表格和颜色；没有它，所有命令都输出纯文本 |
 
-由查询文本或目录生成的会话名只保留路径的最后一部分，并把 `.`、`:` 和空格替换为 `_`。
-
-## 环境要求
-
-| 要求 | 版本或说明 |
-|:------------|:----------------|
-| tmux | 弹出窗口需要 3.2 或更高版本；更旧的 tmux 会在新窗口中打开每个选择器 |
-| bash | 3.2 或更高版本，因此 macOS 的 `/bin/bash` 可以使用 |
-| [fzf](https://github.com/junegunn/fzf) | 位于 `PATH` 中 |
-| [zoxide](https://github.com/ajeetdsouza/zoxide)，可选 | 用于 zoxide 操作 |
-| 打开程序，可选 | `open` 或 `xdg-open`，用于 URL 操作 |
-
-CI 在 Linux x86_64 和 arm64 上使用 GNU coreutils 和 uutils coreutils 运行测试套件，并在 macOS Apple Silicon 和 Intel 上使用系统自带的 BSD 工具、GNU coreutils 和 uutils coreutils 运行。
-
-## 安装
-
-使用 [TPM](https://github.com/tmux-plugins/tpm) 时，把插件加入 `~/.tmux.conf`，然后按 `prefix + I`：
+### 安装
 
 ```tmux
 set -g @plugin 'tmux-revamped/tmux-fzf-revamped'
 ```
 
-不使用 TPM 时，克隆仓库，并在 `~/.tmux.conf` 中运行入口脚本：
+然后按 `prefix + I`。不用 TPM 时，克隆仓库，并在 `~/.tmux.conf` 中运行它的入口文件：
 
-```sh
+```bash
 git clone https://github.com/tmux-revamped/tmux-fzf-revamped ~/.tmux/plugins/tmux-fzf-revamped
 ```
 
@@ -84,88 +63,176 @@ git clone https://github.com/tmux-revamped/tmux-fzf-revamped ~/.tmux/plugins/tmu
 run-shell ~/.tmux/plugins/tmux-fzf-revamped/fzf-revamped.tmux
 ```
 
+在克隆的目录中运行 `make install`，还会把 `fzf-revamped` 放进 `~/.local/bin`，把它的 man 手册和补全放在 `~/.local/share` 下。
+
+### 验证
+
+```bash
+~/.tmux/plugins/tmux-fzf-revamped/bin/fzf-revamped doctor
+```
+
 ## 用法
 
-`prefix + M-f` 打开命令面板。其他操作在你为它们指定按键之前都保持未绑定。下面的示例用 fzf 选择器替换 tmux 自带的 `s` 和 `w` 选择器，并添加了几个操作：
+为想用的选择器绑定按键，然后重新加载配置或运行 `fzf-revamped apply`：
 
 ```tmux
-set -g @fzf_revamped_session_key s
-set -g @fzf_revamped_window_key w
-set -g @fzf_revamped_pane_key e
-set -g @fzf_revamped_tree_key T
-set -g @fzf_revamped_create_key C
-set -g @fzf_revamped_last_key L
+set -g @fzf_revamped_session_key 'S'
+set -g @fzf_revamped_window_key 'W'
+set -g @fzf_revamped_last_key 'L'
 ```
 
-在任何选择器中，输入文字进行过滤，按 `Enter` 执行，按 `Esc` 不执行直接关闭。把 `@fzf_revamped_preview` 设为 `on` 后，切换选择器会在列表下方显示光标所在项的屏幕内容。
+`M-f` 是本插件在家族按键分配中的位置。如果你已经自己绑定了 `prefix M-f`，插件会保留它，并由 `doctor` 说明。设为 `off` 的按键不绑定。即使一个按键名无效，其他按键仍会绑定，`apply` 会带着 tmux 的错误以 1 退出。
 
-## 配置
+| 命令 | 作用 |
+|:--------|:-------------|
+| `fzf-revamped apply` | 立即绑定按键；插件加载时入口点会运行它 |
+| `fzf-revamped list` | 打印 apply 会做的每个绑定；`--json` 输出一个对象 |
+| 带选择器名称的 `fzf-revamped` | 带上选择器名称时，像按键一样运行该选择器；见选择器一节 |
+| `fzf-revamped doctor` | 每个依赖一行，包括被他人占用的默认按键 |
+| `fzf-revamped version` | 版本，然后是 tmux 版本 |
+| `fzf-revamped help` | 帮助页；`man fzf-revamped` 记录相同的命令和设置 |
+| `fzf-revamped` | 在终端上显示菜单 |
 
-| 选项 | 默认值 | 含义 |
-|:-------|:--------|:--------|
+| tmux 选项 | 默认值 | 含义 |
+|:------------|:--------|:--------|
 | `@fzf_revamped_popup_width` | `60%` | 弹出窗口宽度 |
 | `@fzf_revamped_popup_height` | `50%` | 弹出窗口高度 |
-| `@fzf_revamped_popup_border` | `rounded` | tmux 3.4 及以上版本的弹出窗口边框：`rounded`、`single`、`double`、`heavy`、`simple`、`padded` 或 `none`；旧版 tmux 会忽略 |
-| `@fzf_revamped_preview` | 未设置 | `on` 或 `1` 会在切换选择器中实时预览光标所在的窗格 |
-| `@fzf_revamped_mru` | 未设置 | `on` 会按最近连接时间排列会话列表 |
+| `@fzf_revamped_popup_border` | `rounded` | tmux 3.4 及以后的弹出窗口边框：`rounded`、`single`、`double`、`heavy`、`simple`、`padded` 或 `none` |
+| `@fzf_revamped_preview` | `off` | `on` 或 `1` 时在切换选择器中显示光标下的窗格 |
+| `@fzf_revamped_mru` | `off` | `on` 时按最后连接时间排列会话 |
 
-下一节中的按键选项只在插件加载时读取一次。
+每个选项也可以写成用短横线连接的命令选项，例如 `--session-key S`，以及环境变量，例如 `FZF_REVAMPED_SESSION_KEY`；命令行优先于环境变量，环境变量优先于 tmux 选项。空的 tmux 选项表示使用默认值。
 
-### 内部状态
+<a id="选择器"></a>
 
-此选项由插件自己管理，请不要设置。
+## 选择器
 
-| 选项 | 保存内容 |
-|:-------|:------|
-| `@fzf_revamped_broadcast_text` | 在 broadcast 提示中输入的文本，保留到窗格选择器读取为止，随后取消设置 |
+| 按键选项 | 命令 | 作用 |
+|:-----------|:--------|:-------------|
+| `@fzf_revamped_palette_key`，`M-f` | `palette` | 从简短列表中运行 tmux 命令 |
+| `@fzf_revamped_session_key` | `session switch` | 切换到选中的会话 |
+| `@fzf_revamped_window_key` | `window switch` | 切换到选中的窗口及其会话 |
+| `@fzf_revamped_pane_key` | `pane switch` | 切换到选中的窗格 |
+| `@fzf_revamped_kill_key` | `session kill` | 关闭选中的会话 |
+| `@fzf_revamped_tree_key` | `tree` | 前往任意会话、窗口或窗格 |
+| `@fzf_revamped_create_key` | `create` | 切换到会话，或用输入的名称创建一个 |
+| `@fzf_revamped_url_key` | `urls open` | 打开屏幕上的 URL；`urls copy` 把它复制到 tmux 缓冲区 |
+| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | 浏览所有按键绑定 |
+| `@fzf_revamped_process_key` | `process` | 确认后向选中的进程发送 TERM 或指定的信号 |
+| `@fzf_revamped_rename_key` | `rename window` | 通过提示重命名选中的窗口；`rename session` 重命名会话 |
+| `@fzf_revamped_multikill_key` | `multi-kill session` | 确认后关闭用 `Tab` 标记的所有会话 |
+| `@fzf_revamped_broadcast_key` | `broadcast` | 提示输入文本，然后把它和 `Enter` 输入到所有标记的窗格 |
+| `@fzf_revamped_zoxide_key` | `zoxide` | 在 zoxide 文件夹打开会话 |
+| `@fzf_revamped_last_key` | `last` | 不用弹出窗口，切换到上一个会话 |
+| `@fzf_revamped_move_key` | `move-window move` | 把选中的窗口移到提示中输入的会话；`move-window link` 则链接它 |
 
-## 按键绑定
+`window kill`、`pane kill`、`multi-kill window` 和 `multi-kill pane` 没有按键，从命令行运行。列表的每一行都把目标放在隐藏的第一列，所以名为 `feature/login` 的窗口或含空格的会话也能正确定位。
 
-值为空或为 `off` 时，对应操作不绑定。
+<a id="界面"></a>
 
-| 选项 | 默认值 | 操作 |
-|:-------|:--------|:-------|
-| `@fzf_revamped_palette_key` | `M-f` | palette |
-| `@fzf_revamped_session_key` | 未绑定 | session switch |
-| `@fzf_revamped_window_key` | 未绑定 | window switch |
-| `@fzf_revamped_pane_key` | 未绑定 | pane switch |
-| `@fzf_revamped_kill_key` | 未绑定 | session kill |
-| `@fzf_revamped_tree_key` | 未绑定 | tree |
-| `@fzf_revamped_create_key` | 未绑定 | create |
-| `@fzf_revamped_url_key` | 未绑定 | URLs |
-| `@fzf_revamped_cheatsheet_key` | 未绑定 | cheatsheet |
-| `@fzf_revamped_process_key` | 未绑定 | process |
-| `@fzf_revamped_rename_key` | 未绑定 | rename |
-| `@fzf_revamped_multikill_key` | 未绑定 | multi-kill |
-| `@fzf_revamped_broadcast_key` | 未绑定 | broadcast |
-| `@fzf_revamped_zoxide_key` | 未绑定 | zoxide |
-| `@fzf_revamped_last_key` | 未绑定 | last |
-| `@fzf_revamped_move_key` | 未绑定 | move |
+## 界面
 
-`M-f` 是本插件在家族按键分配中的位置。其他操作全部保持未绑定，因此安装整个家族也不会产生按键冲突。
+<details>
+<summary>所有界面，在真实的 tmux 中用 <code>make screens</code> 录制，每个按键显示在状态栏上</summary>
+<br>
 
-## 工作原理
+<table>
+<tr>
+<td width="50%" valign="top"><img src="screens/palette.png" alt="fzf-revamped：prefix M-f 打开命令面板"><br><sub><code>prefix M-f</code> 打开命令面板，来自 <code>hero.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/palette-split.png" alt="fzf-revamped：运行面板中的 split-window -h"><br><sub>运行面板中的 <code>split-window -h</code>，来自 <code>hero.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/sessions.png" alt="fzf-revamped：带预览的会话切换"><br><sub>带预览的会话切换，来自 <code>hero.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/switched.png" alt="fzf-revamped：客户端切换到选中的会话"><br><sub>客户端切换到选中的会话，来自 <code>hero.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/last.png" alt="fzf-revamped：last 键回到上一个会话"><br><sub>last 键回到上一个会话，来自 <code>hero.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/windows.png" alt="fzf-revamped：窗口切换"><br><sub>窗口切换，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/panes.png" alt="fzf-revamped：窗格切换"><br><sub>窗格切换，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/tree.png" alt="fzf-revamped：会话、窗口和窗格的树"><br><sub>会话、窗口和窗格的树，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/create.png" alt="fzf-revamped：输入新名称的创建或切换"><br><sub>输入新名称的创建或切换，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/created.png" alt="fzf-revamped：新会话"><br><sub>新会话，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/urls.png" alt="fzf-revamped：屏幕上的 URL"><br><sub>屏幕上的 URL，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/cheatsheet.png" alt="fzf-revamped：筛选到一个命令的速查表"><br><sub>筛选到一个命令的速查表，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/process.png" alt="fzf-revamped：进程选择器"><br><sub>进程选择器，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/process-confirm.png" alt="fzf-revamped：发送信号前的确认"><br><sub>发送信号前的确认，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/rename.png" alt="fzf-revamped：重命名提示"><br><sub>重命名提示，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/kill.png" alt="fzf-revamped：会话关闭"><br><sub>会话关闭，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/multikill.png" alt="fzf-revamped：多选关闭中标记的两个会话"><br><sub>多选关闭中标记的两个会话，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/broadcast.png" alt="fzf-revamped：广播中标记的两个窗格"><br><sub>广播中标记的两个窗格，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/zoxide.png" alt="fzf-revamped：zoxide 文件夹"><br><sub>zoxide 文件夹，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped：窗口移动提示"><br><sub>窗口移动提示，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped：菜单"><br><sub>菜单，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/doctor.png" alt="fzf-revamped：doctor"><br><sub><code>doctor</code>，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/list.png" alt="fzf-revamped：list"><br><sub><code>list</code>，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/json.png" alt="fzf-revamped：list --json"><br><sub><code>list --json</code>，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/plain-menu.png" alt="fzf-revamped：没有 gum 的菜单"><br><sub>没有 gum 的菜单，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/plain-apply.png" alt="fzf-revamped：从菜单运行 apply"><br><sub>从菜单运行 <code>apply</code>，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/version.png" alt="fzf-revamped：版本"><br><sub>版本，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/error.png" alt="fzf-revamped：未知命令"><br><sub>未知命令，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/themes.png" alt="fzf-revamped：六种主题下的标题"><br><sub>六种主题下的标题，来自 <code>themes.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped：帮助页"><br><sub>帮助页，来自 <code>help.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/accent.png" alt="fzf-revamped：来自 FZF_REVAMPED_ACCENT 的强调色"><br><sub>来自 <code>FZF_REVAMPED_ACCENT</code> 的强调色，来自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"></td>
+</tr>
+</table>
 
-```mermaid
-graph LR
-    A[按键] --> B[display-popup]
-    B --> C[tmux 列表]
-    C --> D[fzf]
-    D --> E[隐藏的目标 ID]
-    E --> F[切换、关闭、重命名或创建]
-```
+</details>
 
-入口脚本 [`fzf-revamped.tmux`](fzf-revamped.tmux) 检查 tmux 版本，把每个按键绑定到 `display-popup -E`，在 tmux 3.2 之前则绑定到 `new-window`，两者都运行 [`src/fzf.sh`](src/fzf.sh)。列表的每一行都带有目标 ID，作为 fzf 不显示的隐藏首列，因此名为 `feature/login` 的窗口或名称中含空格的会话也能解析到正确的对象。在 broadcast、rename 和 move 提示中输入的文本通过会加引号的 `%%%` 占位符传给 tmux，broadcast 再用 `send-keys -l` 输入，因此引号、`$`、`;` 以及 `Enter` 这样的单词都会按字面文本送达。
+## 可移植性
+
+插件是 POSIX `sh`。CI 在下面每一行上运行全部测试。
+
+| Shell | 状态 |
+|:------|:-------|
+| `dash`、macOS 上的 `/bin/sh` | 支持 |
+| `bash` 3.2 和 5.x、系统自带的 `zsh` 和 Homebrew 的 `zsh` | 支持 |
+
+| 系统 | 状态 |
+|:-------|:-------|
+| macOS | Apple Silicon 和 Intel 上的 Tahoe，使用系统自带的工具、Homebrew 的 GNU 工具和 Homebrew 的 uutils |
+| Linux | x86_64 和 arm64 上的 Ubuntu 26.04，使用 GNU coreutils、uutils 和 BusyBox |
 
 ## 开发
 
 | 命令 | 运行内容 |
 |:--------|:-------------|
-| `make test` | [`test/`](test) 下的 bats 测试套件 |
-| `make lint` | 对所有 shell 文件运行 warning 级别的 shellcheck |
-| `make coverage` | 在 Linux 上用 kcov 统计行覆盖率，低于 95% 时失败 |
+| `make fmt` | 对每个脚本运行 shfmt `-i 2` |
+| `make lint` | shfmt、ShellCheck、mandoc、yamllint 和 actionlint，零告警 |
+| `make test` | 在系统 `sh` 下运行 bats 测试 |
+| `make test-all` | 在每个已安装的 shell 下运行测试，macOS 上包括 bash 和 zsh 的两种构建 |
+| `make test-linux` | 在 Ubuntu 容器中运行测试 |
+| `make coverage` | 在这台 Mac 和 Ubuntu 容器中运行 bashcov，合并后以 100% 为门槛 |
+| `make screens` | 用 VHS 在 tmux 中从真实插件录制上面的界面，在 macOS 上运行 |
+| `make install` | 把命令、man 手册和补全安装到 `PREFIX` 下 |
 
-ID 解析、模式和信号校验、版本检查以及会话命名都以纯函数的形式放在 [`src/lib/fzf/fzf.sh`](src/lib/fzf/fzf.sh) 中。[`src/fzf.sh`](src/fzf.sh) 中的每次 tmux 调用都经过同一个包装函数，因此无需 tmux 服务器或 fzf 即可测试路由逻辑。
+提交遵循 Conventional Commits 格式，直接进入 `main`。`main` 上的 `ci` 通过后，`release.yml` 运行 semantic-release：自上一个标签以来的每个 `feat` 或 `fix` 都会发布新版本，更新版本常量，并把说明写进 [`CHANGELOG.md`](CHANGELOG.md)。
 
 ## 许可证
 

@@ -1,0 +1,251 @@
+.TH FZF-REVAMPED 1 "2026-11-16" "fzf-revamped" "User Commands"
+.SH NAME
+fzf-revamped \- switch, kill, rename or create sessions, windows and panes in fzf
+.SH SYNOPSIS
+.B fzf-revamped
+.RI [ options ]
+.B apply
+.br
+.B fzf-revamped
+.RB [ \-\-json ]
+.B list
+.br
+.B fzf-revamped
+.BR session | window | pane
+.RB [ switch | kill ]
+.br
+.B fzf-revamped
+.BR tree | create | palette | cheatsheet | zoxide | last
+.br
+.B fzf-revamped urls
+.RB [ open | copy ]
+.br
+.B fzf-revamped process
+.RI [ signal ]
+.br
+.B fzf-revamped rename
+.RB [ session | window ]
+.br
+.B fzf-revamped multi\-kill
+.RB [ session | window | pane ]
+.br
+.B fzf-revamped broadcast
+.RI [ text ]
+.br
+.B fzf-revamped move\-window
+.RB [ move | link ]
+.br
+.B fzf-revamped preview
+.I target
+.br
+.B fzf-revamped doctor
+.br
+.B fzf-revamped version
+.br
+.B fzf-revamped help
+.SH DESCRIPTION
+.B fzf-revamped
+lists tmux sessions, windows, panes, URLs, commands, key bindings, processes
+or zoxide folders in fzf and acts on the one picked. The entry point
+.B fzf-revamped.tmux
+runs
+.B apply
+once when tmux loads the plugin, and every binding goes to tmux in one call;
+when one key is invalid, the others are still bound. Each key opens a popup,
+or a window before tmux 3.2, that runs one of the commands below.
+.PP
+Every list line carries its target as a hidden first column, so a name with a
+space or a slash still resolves. Run with no command on a terminal, it offers a
+menu.
+.SH COMMANDS
+.TP
+.B apply
+Bind the keys now.
+.TP
+.B list
+Print every binding apply would make, one per line.
+.TP
+.BR session | window | pane " [" switch | kill ]
+Switch the client to the one picked, or kill it.
+.TP
+.B tree
+Pick any session, window or pane and go there.
+.TP
+.B create
+Switch to the session picked, or create one named after what was typed.
+.TP
+.BR urls " [" open | copy ]
+Open a URL on the screen with xdg-open or open, or copy it into a tmux buffer.
+.TP
+.B palette
+Run a tmux command from a short list.
+.TP
+.B cheatsheet
+Browse every key binding.
+.TP
+.BI process " [signal]"
+Send a signal, TERM by default, to the process picked, after a yes.
+.TP
+.BR rename " [" session | window ]
+Rename the one picked to the name typed at a prompt in the popup.
+An empty answer renames nothing.
+.TP
+.BR multi\-kill " [" session | window | pane ]
+Kill every one marked, after a yes.
+.TP
+.BI broadcast " [text]"
+Type the text and Enter into every pane marked. Without text, it reads and
+clears
+.BR @fzf_revamped_broadcast_text ,
+which the broadcast key's prompt fills.
+.TP
+.B zoxide
+Open a session at a zoxide folder.
+.TP
+.B last
+Switch to the last session.
+.TP
+.BR move\-window " [" move | link ]
+Move or link the window picked to a session typed at a prompt in the
+popup. An empty answer moves nothing.
+.TP
+.BI preview " target"
+Print a pane, for the switch preview.
+.TP
+.B doctor
+Print one row per dependency: tmux, fzf, the opener, zoxide, gum, a default key
+someone else holds, and the core tools. Exits 1 only when a required tool is
+missing.
+.TP
+.B version
+Print the version, then the tmux version.
+.TP
+.B help
+Print the help page.
+.SH OPTIONS
+.TP
+.B \-\-json
+.B list
+prints one JSON object.
+.TP
+.BI \-\-theme " name"
+Colours of the terminal interface:
+.BR kodougu ,
+.BR catppuccin\-mocha ,
+.BR catppuccin\-latte ,
+.BR dracula ,
+.BR nord ,
+.BR gruvbox ,
+.B tokyo\-night
+or
+.BR mono .
+The default is
+.BR kodougu .
+.TP
+.BI \-\- setting " value"
+Any tmux option below, named with dashes, such as
+.B \-\-session\-key
+or
+.BR \-\-mru .
+It also takes the form
+.IR \-\-setting = value .
+.SH ENVIRONMENT
+.TP
+.B FZF_REVAMPED_SETTING
+Any tmux option below in capitals, such as
+.BR FZF_REVAMPED_MRU .
+The command line wins over the environment, and the environment over the
+tmux option.
+.TP
+.B FZF_REVAMPED_THEME
+The theme when
+.B \-\-theme
+is not given.
+.TP
+.B FZF_REVAMPED_ACCENT
+A colour such as #CBA6F7 that replaces the accent of the theme.
+.TP
+.B KODOUGU_THEME
+The theme of every kodougu and tmux-revamped tool, when neither
+.B \-\-theme
+nor
+.B FZF_REVAMPED_THEME
+is set.
+.TP
+.B KODOUGU_ACCENT
+The accent of every kodougu and tmux-revamped tool, when
+.B FZF_REVAMPED_ACCENT
+is not set.
+.TP
+.B NO_COLOR
+Turns colour off in every theme.
+.SH TMUX OPTIONS
+An empty tmux option means its default, and a key set to
+.B off
+binds nothing.
+.TP
+.B @fzf_revamped_palette_key
+The palette. The default is
+.BR M-f ;
+a key someone else already bound is left alone and
+.B doctor
+reports it.
+.TP
+.BR @fzf_revamped_session_key ", " @fzf_revamped_window_key ", " @fzf_revamped_pane_key
+The session, window and pane switchers. Unbound by default.
+.TP
+.BR @fzf_revamped_kill_key ", " @fzf_revamped_multikill_key
+The session killer and the session multi-kill. Unbound by default.
+.TP
+.BR @fzf_revamped_tree_key ", " @fzf_revamped_create_key ", " @fzf_revamped_url_key ", " @fzf_revamped_cheatsheet_key
+The tree, create or switch, the URL opener and the cheatsheet. Unbound by
+default.
+.TP
+.BR @fzf_revamped_process_key ", " @fzf_revamped_rename_key ", " @fzf_revamped_broadcast_key
+The process signaller, the window renamer and the broadcast prompt. Unbound by
+default.
+.TP
+.BR @fzf_revamped_zoxide_key ", " @fzf_revamped_last_key ", " @fzf_revamped_move_key
+The zoxide sessions, the last session and the window mover. Unbound by
+default.
+.TP
+.BR @fzf_revamped_popup_width ", " @fzf_revamped_popup_height
+The popup size. The defaults are
+.B 60%
+and
+.BR 50% .
+.TP
+.B @fzf_revamped_popup_border
+The popup border on tmux 3.4 and later:
+.BR rounded ,
+.BR single ,
+.BR double ,
+.BR heavy ,
+.BR simple ,
+.B padded
+or
+.BR none .
+The default is
+.BR rounded .
+.TP
+.B @fzf_revamped_preview
+.B on
+or
+.B 1
+shows the pane under the cursor in the switch pickers.
+.TP
+.B @fzf_revamped_mru
+.B on
+orders the sessions by their last attach.
+.TP
+.B @revamped_theme
+The theme of every tmux-revamped tool, when nothing else sets one. The default
+is
+.BR kodougu .
+.SH EXIT STATUS
+0 on success, 1 on any failure, an invalid key included.
+.SH SEE ALSO
+.BR tmux (1),
+.BR fzf (1),
+.BR zoxide (1),
+.BR gum (1)
