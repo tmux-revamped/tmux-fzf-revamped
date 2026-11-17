@@ -30,7 +30,8 @@ Guidance for anyone, human or agent, changing tmux-fzf-revamped. What it is and 
 - `apply` reads every setting with one `tmux display-message` call and one `env` read, reads `list-keys -T prefix` once for the palette key, builds the plan, and sends every binding to tmux in one call. When that call fails, it sends each binding alone, so one invalid key leaves the others bound and `apply` exits 1 with tmux's error.
 - A picker key opens `display-popup -E` on tmux 3.2 and later, with a `-b` border on 3.4 and later, and `new-window` before 3.2; the last key runs `run-shell` with no popup.
 - A key set to `off` binds nothing, an empty one means its default, and a palette key the person bound before the plugin loaded stays theirs and is reported by `doctor`.
-- The pickers read the settings when they run, so `preview` and `mru` need no reload.
+- The pickers read `preview` and `mru` from the tmux options when they run, so a change needs no reload; one `apply` got from the command line or the environment rides on the picker keys as an option, since neither exists when tmux runs a key. `FZF_REVAMPED_PICK_NAMES` lists what rides.
+- Everything placed in a binding goes through `fzf_revamped_quote`, which single-quotes it and writes each `#` as `"$(printf '%b' '\0043')"`, so a checkout path holding a hash runs the same from a popup, a window or `run-shell`, whether or not tmux expands formats there.
 - The entry point clears every inherited `REVAMPED_` variable except the test switches, and every `FZF_REVAMPED_*_LOADED` guard; every other global is assigned outright in the state file.
 
 ## Domain rules
@@ -50,4 +51,4 @@ Guidance for anyone, human or agent, changing tmux-fzf-revamped. What it is and 
 
 As of 2026-11-16:
 
-- Only `prefix M-f` and the rename key are pressed through a real client in a test; the other picker keys are checked as bindings and their commands called directly.
+- The palette, session, rename, broadcast and last keys are pressed through a real client in a test; the window, pane, kill, tree, create, URL, cheatsheet, process, multi-kill, zoxide and move keys are checked as bindings and their commands called directly.

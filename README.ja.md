@@ -101,7 +101,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_preview` | `off` | `on` か `1` で、切り替えピッカーにカーソル下のペインを表示します |
 | `@fzf_revamped_mru` | `off` | `on` でセッションを最後に接続した順に並べます |
 
-どのオプションも、ダッシュ区切りのコマンドオプション（例 `--session-key S`）と環境変数（例 `FZF_REVAMPED_SESSION_KEY`）で指定できます。優先順位はコマンドライン、環境変数、tmux オプションの順です。空の tmux オプションは既定値を意味します。
+どのオプションも、ダッシュ区切りのコマンドオプション（例 `--session-key S`）と環境変数（例 `FZF_REVAMPED_SESSION_KEY`）で指定できます。優先順位はコマンドライン、環境変数、tmux オプションの順です。tmux オプションで指定した `preview` と `mru` は選択画面を開くたびに読まれ、`fzf-revamped apply` にコマンドラインまたは環境変数で渡したものは割り当てたキーに引き継がれます。空の tmux オプションは既定値を意味します。
 
 <a id="ピッカー"></a>
 

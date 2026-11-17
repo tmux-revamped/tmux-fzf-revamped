@@ -101,7 +101,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_preview` | `off` | `on` or `1` shows the pane under the cursor in the switch pickers |
 | `@fzf_revamped_mru` | `off` | `on` orders sessions by their last attach |
 
-Every option is also a command option with dashes, such as `--session-key S`, and an environment variable, such as `FZF_REVAMPED_SESSION_KEY`; the command line wins over the environment, and the environment over the tmux option. An empty tmux option means its default.
+Every option is also a command option with dashes, such as `--session-key S`, and an environment variable, such as `FZF_REVAMPED_SESSION_KEY`; the command line wins over the environment, and the environment over the tmux option. A `preview` or `mru` given as a tmux option is read when a picker runs, and one given to `fzf-revamped apply` on the command line or in the environment rides on the keys it binds. An empty tmux option means its default.
 
 <a id="pickers"></a>
 

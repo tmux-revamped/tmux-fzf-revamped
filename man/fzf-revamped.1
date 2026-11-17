@@ -52,7 +52,13 @@ runs
 .B apply
 once when tmux loads the plugin, and every binding goes to tmux in one call;
 when one key is invalid, the others are still bound. Each key opens a popup,
-or a window before tmux 3.2, that runs one of the commands below.
+or a window before tmux 3.2, that runs one of the commands below. A
+.B preview
+or
+.B mru
+given as a tmux option is read when a picker runs; one given to
+.B apply
+on the command line or in the environment rides on the keys it binds.
 .PP
 Every list line carries its target as a hidden first column, so a name with a
 space or a slash still resolves. Run with no command on a terminal, it offers a

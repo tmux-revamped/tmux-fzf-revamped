@@ -219,17 +219,57 @@ refuse() {
   [[ "${lines[3]}" == "bind-key B command-prompt -p broadcast: set-option -g @fzf_revamped_broadcast_text \"%%%\" ; new-window \"'"*"/bin/fzf-revamped' broadcast\"" ]]
 }
 
-@test "fzf - the tool path keeps a quote and doubles a hash inside the popup" {
+@test "fzf - no binding carries a hash, whatever the tool path holds" {
   # Arrange
   option last_key L
+  option broadcast_key B
   export PROBE_LIB="/tmp/it's #1/lib"
 
   # Act
   lib_run fzf 'REVAMPED_LIB="${PROBE_LIB}"; export REVAMPED_TEST_TMUX_VERSION=3.4; fzf_revamped_plan; fzf_revamped_lines'
 
   # Assert
-  [[ "${lines[0]}" == "bind-key M-f display-popup -E -b rounded -w 60% -h 50% '/tmp/it'\\''s ##1/bin/fzf-revamped' palette" ]]
-  [[ "${lines[1]}" == "bind-key L run-shell '/tmp/it'\\''s ##1/bin/fzf-revamped' last" ]]
+  [[ "${lines[0]}" == "bind-key M-f display-popup -E -b rounded -w 60% -h 50% '/tmp/it'\\''s '\"\$(printf '%b' '\\0043')\"'1/bin/fzf-revamped' palette" ]]
+  [[ "${lines[1]}" == "bind-key L run-shell '/tmp/it'\\''s '\"\$(printf '%b' '\\0043')\"'1/bin/fzf-revamped' last" ]]
+  [[ "${output}" != *"#"* ]]
+}
+
+@test "fzf - a quoted value survives the shell with its hash, quote and spaces" {
+  # Arrange
+  export PROBE_TEXT="a#b it's #1  two"
+
+  # Act
+  lib_run fzf 'quoted=$(fzf_revamped_quote "${PROBE_TEXT}"); eval "printf \"%s\\n\" ${quoted}"'
+
+  # Assert
+  [[ "${output}" == "a#b it's #1  two" ]]
+}
+
+@test "fzf - preview and mru ride on the picker keys when they came from the command line or environment" {
+  # Arrange
+  option session_key s
+  option last_key L
+  export FZF_REVAMPED_MRU=on FZF_REVAMPED_PREVIEW=on FZF_REVAMPED_POPUP_WIDTH=70%
+
+  # Act
+  lib_run fzf 'export REVAMPED_TEST_TMUX_VERSION=3.4; fzf_revamped_plan; fzf_revamped_lines; export REVAMPED_TEST_TMUX_VERSION=3.1; fzf_revamped_plan; fzf_revamped_lines'
+
+  # Assert
+  [[ "${lines[0]}" == "bind-key s display-popup -E -b rounded -w 70% -h 50% '"*"/bin/fzf-revamped' --preview 'on' --mru 'on' session switch" ]]
+  [[ "${lines[2]}" == "bind-key L run-shell '"*"/bin/fzf-revamped' last" ]]
+  [[ "${lines[3]}" == "bind-key s new-window '"*"/bin/fzf-revamped' --preview 'on' --mru 'on' session switch" ]]
+}
+
+@test "fzf - a setting from a tmux option stays off the keys" {
+  # Arrange
+  option session_key s
+  option preview on
+
+  # Act
+  plan_at 3.4
+
+  # Assert
+  [[ "${lines[0]}" == "bind-key s display-popup -E -b rounded -w 60% -h 50% '"*"/bin/fzf-revamped' session switch" ]]
 }
 
 @test "fzf - a palette key the person bound is left alone and reported" {

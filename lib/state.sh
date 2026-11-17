@@ -25,6 +25,7 @@ popup_height	50%
 popup_border	rounded
 preview
 mru	'
+FZF_REVAMPED_PICK_NAMES='preview mru'
 FZF_REVAMPED_NAMES='palette_key session_key window_key pane_key kill_key tree_key create_key url_key cheatsheet_key process_key rename_key multikill_key broadcast_key zoxide_key last_key move_key popup_width popup_height popup_border preview mru'
 FZF_REVAMPED_S_palette_key='M-f'
 FZF_REVAMPED_S_session_key=''
@@ -52,6 +53,7 @@ FZF_REVAMPED_TAB='	'
 FZF_REVAMPED_PLAN=""
 FZF_REVAMPED_TMUX=""
 FZF_REVAMPED_TOOL=""
+FZF_REVAMPED_CARRIED=""
 FZF_REVAMPED_TAKEN=""
 FZF_REVAMPED_BORDER=""
 REVAMPED_LOG_NS=fzf-revamped

@@ -99,7 +99,41 @@ PLAN
 }
 
 fzf_revamped_quote() {
-  printf '%s\n' "$1" | sed -e "s/'/'\\\\''/g" -e "1s/^/'/" -e "\$s/\$/'/"
+  printf '%s\n' "$1" | sed -e "s/'/'\\\\''/g" -e "s/#/'\"\$(printf '%b' '\\\\0043')\"'/g" -e "1s/^/'/" -e "\$s/\$/'/"
+}
+
+fzf_revamped_carried_rows() {
+  env | FZF_REVAMPED_ROWS="${FZF_REVAMPED_PICK_NAMES}" awk '
+    BEGIN {
+      count = split(ENVIRON["FZF_REVAMPED_ROWS"], names, " ")
+      for (i = 1; i <= count; i++) { want["FZF_REVAMPED_" toupper(names[i])] = i }
+    }
+    {
+      at = index($0, "=")
+      key = substr($0, 1, at - 1)
+      if (key in want) { value[want[key]] = substr($0, at + 1) }
+    }
+    END {
+      for (i = 1; i <= count; i++) {
+        if (value[i] == "") { continue }
+        option = names[i]
+        gsub(/_/, "-", option)
+        print option "\t" value[i]
+      }
+    }
+  '
+}
+
+fzf_revamped_carried() {
+  fzf_revamped_carried_out=""
+  fzf_revamped_carried_list=$(fzf_revamped_carried_rows)
+  while IFS='	' read -r fzf_revamped_carried_name fzf_revamped_carried_value; do
+    [ -n "${fzf_revamped_carried_name}" ] || continue
+    fzf_revamped_carried_out="${fzf_revamped_carried_out} --${fzf_revamped_carried_name} $(fzf_revamped_quote "${fzf_revamped_carried_value}")"
+  done <<EOF
+${fzf_revamped_carried_list}
+EOF
+  printf '%s' "${fzf_revamped_carried_out}"
 }
 
 fzf_revamped_tool() {
@@ -129,13 +163,12 @@ fzf_revamped_bound() {
 fzf_revamped_plan_picker() {
   fzf_revamped_bound "$1" || return 0
   if ! fzf_revamped_at_least 3.2; then
-    fzf_revamped_emit bind-key "$1" new-window "${FZF_REVAMPED_TOOL} $2"
+    fzf_revamped_emit bind-key "$1" new-window "${FZF_REVAMPED_TOOL}${FZF_REVAMPED_CARRIED} $2"
     return 0
   fi
-  fzf_revamped_plan_picker_tool=$(printf '%s' "${FZF_REVAMPED_TOOL}" | sed 's/#/##/g')
   set -- "$1" "$2" bind-key "$1" display-popup -E
   [ -z "${FZF_REVAMPED_BORDER}" ] || set -- "$@" -b "${FZF_REVAMPED_BORDER}"
-  set -- "$@" -w "${FZF_REVAMPED_S_popup_width}" -h "${FZF_REVAMPED_S_popup_height}" "${fzf_revamped_plan_picker_tool} $2"
+  set -- "$@" -w "${FZF_REVAMPED_S_popup_width}" -h "${FZF_REVAMPED_S_popup_height}" "${FZF_REVAMPED_TOOL}${FZF_REVAMPED_CARRIED} $2"
   shift 2
   fzf_revamped_emit "$@"
 }
@@ -153,8 +186,7 @@ fzf_revamped_plan_broadcast() {
     fzf_revamped_emit bind-key "${FZF_REVAMPED_S_broadcast_key}" command-prompt -p "broadcast:" "${fzf_revamped_plan_broadcast_store} ; new-window ${fzf_revamped_plan_broadcast_run}"
     return 0
   fi
-  fzf_revamped_plan_broadcast_tool=$(printf '%s' "${FZF_REVAMPED_TOOL}" | sed 's/#/##/g')
-  fzf_revamped_plan_broadcast_run=$(fzf_revamped_double "${fzf_revamped_plan_broadcast_tool} broadcast")
+  fzf_revamped_plan_broadcast_run=$(fzf_revamped_double "${FZF_REVAMPED_TOOL} broadcast")
   fzf_revamped_plan_broadcast_flag=""
   [ -z "${FZF_REVAMPED_BORDER}" ] || fzf_revamped_plan_broadcast_flag=" -b ${FZF_REVAMPED_BORDER}"
   fzf_revamped_emit bind-key "${FZF_REVAMPED_S_broadcast_key}" command-prompt -p "broadcast:" "${fzf_revamped_plan_broadcast_store} ; display-popup -E${fzf_revamped_plan_broadcast_flag} -w ${FZF_REVAMPED_S_popup_width} -h ${FZF_REVAMPED_S_popup_height} ${fzf_revamped_plan_broadcast_run}"
@@ -177,6 +209,7 @@ fzf_revamped_plan() {
   FZF_REVAMPED_TMUX=$(fzf_revamped_parse_version "${fzf_revamped_plan_raw}")
   FZF_REVAMPED_PLAN=""
   FZF_REVAMPED_TOOL=$(fzf_revamped_tool)
+  FZF_REVAMPED_CARRIED=$(fzf_revamped_carried)
   FZF_REVAMPED_BORDER=$(fzf_revamped_border)
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_session_key}" "session switch"
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_window_key}" "window switch"
@@ -192,10 +225,7 @@ fzf_revamped_plan() {
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_multikill_key}" "multi-kill session"
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_zoxide_key}" zoxide
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_move_key}" "move-window move"
-  if fzf_revamped_bound "${FZF_REVAMPED_S_last_key}"; then
-    fzf_revamped_plan_last=$(printf '%s' "${FZF_REVAMPED_TOOL}" | sed 's/#/##/g')
-    fzf_revamped_emit bind-key "${FZF_REVAMPED_S_last_key}" run-shell "${fzf_revamped_plan_last} last"
-  fi
+  ! fzf_revamped_bound "${FZF_REVAMPED_S_last_key}" || fzf_revamped_emit bind-key "${FZF_REVAMPED_S_last_key}" run-shell "${FZF_REVAMPED_TOOL} last"
   fzf_revamped_plan_broadcast
 }
 
@@ -500,7 +530,8 @@ fzf_revamped_zoxide() {
   fzf_revamped_zoxide_pick=$(printf '%s\n' "${fzf_revamped_zoxide_dirs}" | fzf_revamped_fzf) || fzf_revamped_zoxide_pick=""
   [ -n "${fzf_revamped_zoxide_pick}" ] || return 0
   fzf_revamped_zoxide_name=$(fzf_revamped_session_name "${fzf_revamped_zoxide_pick}")
-  tmux new-session -A -d -s "${fzf_revamped_zoxide_name}" -c "${fzf_revamped_zoxide_pick}" \; switch-client -t "${fzf_revamped_zoxide_name}" 2>/dev/null || :
+  fzf_revamped_zoxide_start=$(printf '%s\n' "${fzf_revamped_zoxide_pick}" | sed 's/#/##/g')
+  tmux new-session -A -d -s "${fzf_revamped_zoxide_name}" -c "${fzf_revamped_zoxide_start}" \; switch-client -t "${fzf_revamped_zoxide_name}" 2>/dev/null || :
 }
 
 fzf_revamped_last() {

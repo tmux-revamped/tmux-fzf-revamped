@@ -26,13 +26,22 @@ teardown() {
   teardown_tmux_server
 }
 
+screens() {
+  printf 'host screen:\n'
+  command tmux -S "${HOST}" capture-pane -p -t host || :
+  printf 'pane screen:\n'
+  tmux capture-pane -p -t test:0 || :
+}
+
 wait_for() {
   local delay
-  for delay in 0.01 0.02 0.05 0.1 0.2 0.5 1 1 2; do
+  for delay in 0.01 0.02 0.05 0.1 0.1 0.2 0.2 0.5 0.5 1 1 1 2 2; do
     "$@" && return 0
     sleep "${delay}"
   done
-  "$@"
+  "$@" && return 0
+  screens
+  return 1
 }
 
 attached() {
@@ -466,8 +475,30 @@ tmux_shows() {
   tool zoxide
 
   # Assert
-  run tmux display-message -p -t proj_x '#{pane_current_path}'
-  [[ "${output}" == "${real}" || "${output}" == "${folder}" ]]
+  wait_for session_at proj_x "${real}" "${folder}"
+}
+
+session_at() {
+  local now
+  now=$(tmux display-message -p -t "$1" '#{pane_current_path}')
+  [[ "${now}" == "$2" || "${now}" == "$3" ]]
+}
+
+@test "zoxide - the session starts in a folder whose path holds a hash tmux reads as a format" {
+  # Arrange
+  local folder="${BATS_TEST_TMPDIR}/it's #S dir/projy" real
+  mkdir -p "${folder}"
+  real=$(cd "${folder}" && pwd -P)
+  printf '%s\n' "${folder}" >"${BATS_TEST_TMPDIR}/zoxide.out"
+  printf '#!/bin/sh\ncat "%s"\n' "${BATS_TEST_TMPDIR}/zoxide.out" >"${BATS_TEST_TMPDIR}/stubs/zoxide"
+  chmod +x "${BATS_TEST_TMPDIR}/stubs/zoxide"
+  answers "${folder}"
+
+  # Act
+  tool zoxide
+
+  # Assert
+  wait_for session_at projy "${real}" "${folder}"
 }
 
 @test "last - the client returns to the previous session" {
@@ -587,6 +618,41 @@ windows_are() {
   [[ "${names}" == "$1" ]]
 }
 
+@test "palette - a checkout path with a space, a quote and a hash still opens the palette from its key" {
+  # Arrange
+  local copy="${BATS_TEST_TMPDIR}/it's #1 dir" quoted pick
+  mkdir -p "${copy}"
+  cp -Rf "${ROOT}/bin" "${ROOT}/lib" "${ROOT}/fzf-revamped.tmux" "${copy}/"
+  quoted=$(printf '%s' "${copy}" | sed -e "s/'/'\\\\''/g" -e 's/#/##/g')
+  pick=$(line split-window "split-window  split down")
+  tmux set-environment -g PATH "${BATS_TEST_TMPDIR}/stubs:${PATH}"
+  tmux run-shell "'${quoted}/fzf-revamped.tmux'"
+  answers "${pick}"
+
+  # Act
+  command tmux -S "${HOST}" send-keys -t host C-b M-f
+
+  # Assert
+  wait_for panes_are 2
+}
+
+@test "session - a preview given to apply on the command line reaches the picker the key opens" {
+  # Arrange
+  local pick
+  pick=$(line other "other")
+  tmux set-environment -g PATH "${BATS_TEST_TMPDIR}/stubs:${PATH}"
+  answers "${pick}"
+  tool --preview on --session-key S apply
+
+  # Act
+  command tmux -S "${HOST}" send-keys -t host C-b S
+
+  # Assert
+  wait_for client_on '#{session_name}' other
+  run grep -c -- '--preview ' "${BATS_TEST_TMPDIR}/fzf.args"
+  [[ "${output}" == "1" ]]
+}
+
 @test "palette - pressing prefix M-f runs the picked command through the popup" {
   # Arrange
   local pick
@@ -607,4 +673,31 @@ panes_are() {
   panes=$(tmux list-panes -t test:0 -F x)
   count=$(grep -c x <<<"${panes}")
   [[ "${count}" == "$1" ]]
+}
+
+@test "broadcast and last - their keys work from a checkout path with a space, a quote and a hash" {
+  # Arrange
+  local copy="${BATS_TEST_TMPDIR}/it's #1 dir" quoted marked client
+  client=$(first_client)
+  mkdir -p "${copy}"
+  cp -Rf "${ROOT}/bin" "${ROOT}/lib" "${ROOT}/fzf-revamped.tmux" "${copy}/"
+  quoted=$(printf '%s' "${copy}" | sed -e "s/'/'\\\\''/g" -e 's/#/##/g')
+  marked=$(line test:0.0 "test:0.0  sh")
+  tmux set-option -g @fzf_revamped_broadcast_key B
+  tmux set-option -g @fzf_revamped_last_key L
+  tmux set-environment -g PATH "${BATS_TEST_TMPDIR}/stubs:${PATH}"
+  tmux run-shell "'${quoted}/fzf-revamped.tmux'"
+  answers "${marked}"
+
+  # Act
+  command tmux -S "${HOST}" send-keys -t host C-b B
+
+  # Assert
+  wait_for host_shows "broadcast:"
+  command tmux -S "${HOST}" send-keys -t host 'echo odd-path' Enter
+  wait_for tmux_shows test:0 $'odd-path\n'
+  tmux switch-client -c "${client}" -t other
+  wait_for client_on '#{session_name}' other
+  command tmux -S "${HOST}" send-keys -t host C-b L
+  wait_for client_on '#{session_name}' test
 }

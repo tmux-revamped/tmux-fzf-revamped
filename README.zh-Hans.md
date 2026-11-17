@@ -101,7 +101,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_preview` | `off` | `on` 或 `1` 时在切换选择器中显示光标下的窗格 |
 | `@fzf_revamped_mru` | `off` | `on` 时按最后连接时间排列会话 |
 
-每个选项也可以写成用短横线连接的命令选项，例如 `--session-key S`，以及环境变量，例如 `FZF_REVAMPED_SESSION_KEY`；命令行优先于环境变量，环境变量优先于 tmux 选项。空的 tmux 选项表示使用默认值。
+每个选项也可以写成用短横线连接的命令选项，例如 `--session-key S`，以及环境变量，例如 `FZF_REVAMPED_SESSION_KEY`；命令行优先于环境变量，环境变量优先于 tmux 选项。以 tmux 选项给出的 `preview` 和 `mru` 在选择器运行时读取；通过命令行或环境变量传给 `fzf-revamped apply` 的值会带到它绑定的按键上。空的 tmux 选项表示使用默认值。
 
 <a id="选择器"></a>
 
