@@ -14,7 +14,7 @@ Guidance for anyone, human or agent, changing tmux-fzf-revamped. What it is and 
 | [`lib/state.sh`](lib/state.sh) | Every global, including `FZF_REVAMPED_SETTINGS`, the table of setting names and defaults the rest reads |
 | [`lib/core.sh`](lib/core.sh) | The version |
 | [`lib/`](lib) | Every other file is the shared library, identical in every member |
-| [`test/fzf.bats`](test/fzf.bats), [`test/commands.bats`](test/commands.bats), [`test/entrypoint.bats`](test/entrypoint.bats) | This member's suites: the helpers and the plan through stubs, the commands, and every picker on a private tmux server with a client attached from a second tmux |
+| [`test/fzf.bats`](test/fzf.bats), [`test/commands.bats`](test/commands.bats), [`test/entrypoint.bats`](test/entrypoint.bats), [`test/keys.bats`](test/keys.bats) | This member's suites: the helpers and the plan through stubs, the commands, every picker on a private tmux server, and every key pressed through a second tmux attached to it; the last two share [`test/pickers_helpers.bash`](test/pickers_helpers.bash) |
 | [`screens/`](screens) | The tapes and the recording's tmux config |
 
 ## Names
@@ -49,6 +49,4 @@ Guidance for anyone, human or agent, changing tmux-fzf-revamped. What it is and 
 
 ## Gaps against FAMILY.md
 
-As of 2026-11-16:
-
-- The palette, session, rename, broadcast and last keys are pressed through a real client in a test; the window, pane, kill, tree, create, URL, cheatsheet, process, multi-kill, zoxide and move keys are checked as bindings and their commands called directly.
+As of 2026-11-17, none.
