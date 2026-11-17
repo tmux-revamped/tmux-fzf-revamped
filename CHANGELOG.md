@@ -1,5 +1,12 @@
 # Changelog
 
+# [2.1.0](https://github.com/tmux-revamped/tmux-fzf-revamped/compare/v2.0.0...v2.1.0) (2026-11-17)
+
+
+### Features
+
+* run a binding from the cheatsheet ([cc4d755](https://github.com/tmux-revamped/tmux-fzf-revamped/commit/cc4d755a1b290e0886367dba9e0c56ab5f1c54e4))
+
 # [2.0.0](https://github.com/tmux-revamped/tmux-fzf-revamped/compare/v1.2.0...v2.0.0) (2026-11-17)
 
 
