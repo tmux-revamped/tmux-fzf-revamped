@@ -110,6 +110,12 @@ typed() {
   TMUX="${TMUX_SOCKET},1,0" PATH="${BATS_TEST_TMPDIR}/stubs:${PATH}" run python3 "${ROOT}/test/on_tty.py" "${shell_words[@]}" "${ROOT}/bin/fzf-revamped" "$@"
 }
 
+key_binding() {
+  local table
+  table=$(tmux list-keys -T "$1")
+  awk -v key="$2" '{ for (i = 1; i < NF; i++) { if ($i == "-T") { if ($(i + 2) == key) { print } break } } }' <<<"${table}"
+}
+
 @test "entrypoint - loading binds only the palette on prefix M-f" {
   # Arrange
   local key=M-f
@@ -121,7 +127,7 @@ typed() {
   run tmux list-keys -T prefix
   run grep -c 'fzf-revamped' <<<"${output}"
   [[ "${output}" == "1" ]]
-  run tmux list-keys -T prefix "${key}"
+  run key_binding prefix "${key}"
   [[ "${output}" == *"display-popup -E"*"' palette"* ]]
 }
 
