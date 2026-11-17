@@ -117,7 +117,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_tree_key` | `tree` | 前往任意会话、窗口或窗格 |
 | `@fzf_revamped_create_key` | `create` | 切换到会话，或用输入的名称创建一个 |
 | `@fzf_revamped_url_key` | `urls open` | 打开屏幕上的 URL；`urls copy` 把它复制到 tmux 缓冲区 |
-| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | 浏览所有按键绑定 |
+| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | 浏览所有按键绑定，并运行选中的那个 |
 | `@fzf_revamped_process_key` | `process` | 确认后向选中的进程发送 TERM 或指定的信号 |
 | `@fzf_revamped_rename_key` | `rename window` | 通过提示重命名选中的窗口；`rename session` 重命名会话 |
 | `@fzf_revamped_multikill_key` | `multi-kill session` | 确认后关闭用 `Tab` 标记的所有会话 |
@@ -162,43 +162,46 @@ set -g @fzf_revamped_last_key 'L'
 <td width="50%" valign="top"><img src="screens/cheatsheet.png" alt="fzf-revamped：筛选到一个命令的速查表"><br><sub>筛选到一个命令的速查表，来自 <code>stills.tape</code></sub></td>
 </tr>
 <tr>
+<td width="50%" valign="top"><img src="screens/cheatsheet-run.png" alt="fzf-revamped：从速查表运行的按键绑定"><br><sub>从速查表运行的按键绑定：窗格已分割，来自 <code>stills.tape</code></sub></td>
 <td width="50%" valign="top"><img src="screens/process.png" alt="fzf-revamped：进程选择器"><br><sub>进程选择器，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/process-confirm.png" alt="fzf-revamped：发送信号前的确认"><br><sub>发送信号前的确认，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/rename.png" alt="fzf-revamped：重命名提示"><br><sub>重命名提示，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/kill.png" alt="fzf-revamped：会话关闭"><br><sub>会话关闭，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/multikill.png" alt="fzf-revamped：多选关闭中标记的两个会话"><br><sub>多选关闭中标记的两个会话，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/broadcast.png" alt="fzf-revamped：广播中标记的两个窗格"><br><sub>广播中标记的两个窗格，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/zoxide.png" alt="fzf-revamped：zoxide 文件夹"><br><sub>zoxide 文件夹，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped：窗口移动提示"><br><sub>窗口移动提示，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped：菜单"><br><sub>菜单，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/doctor.png" alt="fzf-revamped：doctor"><br><sub><code>doctor</code>，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/list.png" alt="fzf-revamped：list"><br><sub><code>list</code>，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/json.png" alt="fzf-revamped：list --json"><br><sub><code>list --json</code>，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/plain-menu.png" alt="fzf-revamped：没有 gum 的菜单"><br><sub>没有 gum 的菜单，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/plain-apply.png" alt="fzf-revamped：从菜单运行 apply"><br><sub>从菜单运行 <code>apply</code>，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/version.png" alt="fzf-revamped：版本"><br><sub>版本，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/error.png" alt="fzf-revamped：未知命令"><br><sub>未知命令，来自 <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/themes.png" alt="fzf-revamped：六种主题下的标题"><br><sub>六种主题下的标题，来自 <code>themes.tape</code></sub></td>
-<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped：帮助页"><br><sub>帮助页，来自 <code>help.tape</code></sub></td>
 </tr>
 <tr>
+<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped：帮助页"><br><sub>帮助页，来自 <code>help.tape</code></sub></td>
 <td width="50%" valign="top"><img src="screens/accent.png" alt="fzf-revamped：来自 FZF_REVAMPED_ACCENT 的强调色"><br><sub>来自 <code>FZF_REVAMPED_ACCENT</code> 的强调色，来自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"></td>
 </tr>
 </table>

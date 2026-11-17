@@ -456,7 +456,10 @@ fzf_revamped_palette() {
 fzf_revamped_cheatsheet() {
   fzf_revamped_cheatsheet_keys=$(tmux list-keys 2>/dev/null) || fzf_revamped_cheatsheet_keys=""
   [ -n "${fzf_revamped_cheatsheet_keys}" ] || return 0
-  printf '%s\n' "${fzf_revamped_cheatsheet_keys}" | fzf_revamped_fzf >/dev/null || :
+  fzf_revamped_cheatsheet_pick=$(printf '%s\n' "${fzf_revamped_cheatsheet_keys}" | fzf_revamped_fzf) || fzf_revamped_cheatsheet_pick=""
+  fzf_revamped_cheatsheet_command=$(printf '%s\n' "${fzf_revamped_cheatsheet_pick}" | sed -n -E 's/^bind-key +(-r +)?-T +[^ ]+ +[^ ]+ +//p')
+  [ -n "${fzf_revamped_cheatsheet_command}" ] || return 0
+  tmux if-shell -F 1 "${fzf_revamped_cheatsheet_command}" 2>/dev/null || :
 }
 
 fzf_revamped_process() {

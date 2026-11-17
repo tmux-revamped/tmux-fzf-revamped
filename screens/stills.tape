@@ -111,6 +111,25 @@ Sleep 800ms
 Escape
 Sleep 1500ms
 Hide
+Ctrl+]
+Type@5ms "prefix ?, 'split-window -h, Enter"
+Enter
+Show
+Ctrl+B
+Type@1ms "?"
+Sleep 2s
+Type "'split-window -h"
+Sleep 800ms
+Enter
+Sleep 1500ms
+Screenshot cheatsheet-run.png
+Sleep 800ms
+Hide
+Type "exit"
+Enter
+Show
+Sleep 800ms
+Hide
 Type "sleep 600 &"
 Enter
 Type "clear"

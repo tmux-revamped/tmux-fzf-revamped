@@ -12,7 +12,7 @@ _fzf_revamped() {
     'create:switch to or create a session'
     'urls:open or copy a URL on the screen'
     'palette:run a tmux command'
-    'cheatsheet:browse every key binding'
+    'cheatsheet:browse the key bindings and run one'
     'process:signal a process'
     'rename:rename a session or window'
     'multi-kill:kill several'

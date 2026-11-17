@@ -255,6 +255,40 @@ bats_require_minimum_version 1.5.0
   [[ "${output}" -gt 50 ]]
 }
 
+@test "cheatsheet - the picked binding's command runs" {
+  # Arrange
+  local keys pick
+  tmux bind-key -T prefix F9 new-window -d -n fromsheet
+  keys=$(tmux list-keys -T prefix)
+  pick=$(grep fromsheet <<<"${keys}")
+  answers "${pick}"
+
+  # Act
+  tool cheatsheet
+
+  # Assert
+  [[ "${status}" -eq 0 ]]
+  run window_names test
+  [[ "${output}" == "editor logs fromsheet" ]]
+}
+
+@test "cheatsheet - a repeating binding with a quoted argument runs whole" {
+  # Arrange
+  local keys pick
+  tmux bind-key -r -T prefix F8 rename-window -t test:1 "two words"
+  keys=$(tmux list-keys -T prefix)
+  pick=$(grep 'two words' <<<"${keys}")
+  answers "${pick}"
+
+  # Act
+  tool cheatsheet
+
+  # Assert
+  [[ "${status}" -eq 0 ]]
+  run window_names test
+  [[ "${output}" == "editor two words" ]]
+}
+
 @test "process - the picked process gets the signal only after a yes" {
   # Arrange
   local pid

@@ -8,7 +8,7 @@ complete -c fzf-revamped -n __fish_use_subcommand -a tree -d 'pick any session, 
 complete -c fzf-revamped -n __fish_use_subcommand -a create -d 'switch to or create a session'
 complete -c fzf-revamped -n __fish_use_subcommand -a urls -d 'open or copy a URL on the screen'
 complete -c fzf-revamped -n __fish_use_subcommand -a palette -d 'run a tmux command'
-complete -c fzf-revamped -n __fish_use_subcommand -a cheatsheet -d 'browse every key binding'
+complete -c fzf-revamped -n __fish_use_subcommand -a cheatsheet -d 'browse the key bindings and run one'
 complete -c fzf-revamped -n __fish_use_subcommand -a process -d 'signal a process'
 complete -c fzf-revamped -n __fish_use_subcommand -a rename -d 'rename a session or window'
 complete -c fzf-revamped -n __fish_use_subcommand -a multi-kill -d 'kill several'

@@ -117,7 +117,7 @@ Every option is also a command option with dashes, such as `--session-key S`, an
 | `@fzf_revamped_tree_key` | `tree` | Goes to any session, window or pane |
 | `@fzf_revamped_create_key` | `create` | Switches to a session, or creates one named after what you typed |
 | `@fzf_revamped_url_key` | `urls open` | Opens a URL on the screen; `urls copy` copies it into a tmux buffer |
-| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | Browses every key binding |
+| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | Browses every key binding and runs the one you pick |
 | `@fzf_revamped_process_key` | `process` | Sends TERM, or the signal given, to the process picked, after a yes |
 | `@fzf_revamped_rename_key` | `rename window` | Renames the window picked through a prompt; `rename session` renames a session |
 | `@fzf_revamped_multikill_key` | `multi-kill session` | Kills every session marked with `Tab`, after a yes |
@@ -162,43 +162,46 @@ Every option is also a command option with dashes, such as `--session-key S`, an
 <td width="50%" valign="top"><img src="screens/cheatsheet.png" alt="fzf-revamped: The cheatsheet filtered to one command"><br><sub>The cheatsheet filtered to one command, from <code>stills.tape</code></sub></td>
 </tr>
 <tr>
+<td width="50%" valign="top"><img src="screens/cheatsheet-run.png" alt="fzf-revamped: A binding run from the cheatsheet"><br><sub>A binding run from the cheatsheet: the pane is split, from <code>stills.tape</code></sub></td>
 <td width="50%" valign="top"><img src="screens/process.png" alt="fzf-revamped: The process picker"><br><sub>The process picker, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/process-confirm.png" alt="fzf-revamped: The yes or no before the signal"><br><sub>The yes or no before the signal, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/rename.png" alt="fzf-revamped: The rename prompt"><br><sub>The rename prompt, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/kill.png" alt="fzf-revamped: The session killer"><br><sub>The session killer, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/multikill.png" alt="fzf-revamped: Two sessions marked for multi-kill"><br><sub>Two sessions marked for multi-kill, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/broadcast.png" alt="fzf-revamped: Two panes marked for a broadcast"><br><sub>Two panes marked for a broadcast, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/zoxide.png" alt="fzf-revamped: The zoxide folders"><br><sub>The zoxide folders, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped: The move prompt for a window"><br><sub>The move prompt for a window, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped: The menu"><br><sub>The menu, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/doctor.png" alt="fzf-revamped: doctor"><br><sub><code>doctor</code>, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/list.png" alt="fzf-revamped: list"><br><sub><code>list</code>, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/json.png" alt="fzf-revamped: list --json"><br><sub><code>list --json</code>, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/plain-menu.png" alt="fzf-revamped: The menu without gum"><br><sub>The menu without gum, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/plain-apply.png" alt="fzf-revamped: apply from the menu"><br><sub><code>apply</code> from the menu, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/version.png" alt="fzf-revamped: The version"><br><sub>The version, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/error.png" alt="fzf-revamped: An unknown command"><br><sub>An unknown command, from <code>stills.tape</code></sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/themes.png" alt="fzf-revamped: The header in six themes"><br><sub>The header in six themes, from <code>themes.tape</code></sub></td>
-<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped: The help page"><br><sub>The help page, from <code>help.tape</code></sub></td>
 </tr>
 <tr>
+<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped: The help page"><br><sub>The help page, from <code>help.tape</code></sub></td>
 <td width="50%" valign="top"><img src="screens/accent.png" alt="fzf-revamped: An accent from FZF_REVAMPED_ACCENT"><br><sub>An accent from <code>FZF_REVAMPED_ACCENT</code>, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"></td>
 </tr>
 </table>

@@ -117,7 +117,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_tree_key` | `tree` | 任意のセッション、ウィンドウ、ペインに移動します |
 | `@fzf_revamped_create_key` | `create` | セッションに切り替えるか、入力した名前で作成します |
 | `@fzf_revamped_url_key` | `urls open` | 画面上の URL を開きます。`urls copy` は tmux のバッファーにコピーします |
-| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | すべてのキー割り当てを表示します |
+| `@fzf_revamped_cheatsheet_key` | `cheatsheet` | すべてのキー割り当てを表示し、選んだものを実行します |
 | `@fzf_revamped_process_key` | `process` | 選んだプロセスに、確認後 TERM か指定したシグナルを送ります |
 | `@fzf_revamped_rename_key` | `rename window` | 選んだウィンドウの名前をプロンプトで変えます。`rename session` はセッションの名前を変えます |
 | `@fzf_revamped_multikill_key` | `multi-kill session` | `Tab` で選んだすべてのセッションを、確認後に終了します |
@@ -162,43 +162,46 @@ set -g @fzf_revamped_last_key 'L'
 <td width="50%" valign="top"><img src="screens/cheatsheet.png" alt="fzf-revamped: 1 つのコマンドに絞ったチートシート"><br><sub>1 つのコマンドに絞ったチートシート。<code>stills.tape</code>より</sub></td>
 </tr>
 <tr>
+<td width="50%" valign="top"><img src="screens/cheatsheet-run.png" alt="fzf-revamped: チートシートから実行したキー割り当て"><br><sub>チートシートから実行したキー割り当て。ペインが分割されています。<code>stills.tape</code>より</sub></td>
 <td width="50%" valign="top"><img src="screens/process.png" alt="fzf-revamped: プロセスピッカー"><br><sub>プロセスピッカー。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/process-confirm.png" alt="fzf-revamped: シグナルの前の確認"><br><sub>シグナルの前の確認。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/rename.png" alt="fzf-revamped: 名前変更のプロンプト"><br><sub>名前変更のプロンプト。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/kill.png" alt="fzf-revamped: セッション終了"><br><sub>セッション終了。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/multikill.png" alt="fzf-revamped: マルチキルで選んだ 2 つのセッション"><br><sub>マルチキルで選んだ 2 つのセッション。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/broadcast.png" alt="fzf-revamped: ブロードキャストで選んだ 2 つのペイン"><br><sub>ブロードキャストで選んだ 2 つのペイン。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/zoxide.png" alt="fzf-revamped: zoxide のフォルダー"><br><sub>zoxide のフォルダー。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped: ウィンドウ移動のプロンプト"><br><sub>ウィンドウ移動のプロンプト。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped: メニュー"><br><sub>メニュー。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/doctor.png" alt="fzf-revamped: doctor"><br><sub><code>doctor</code>。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/list.png" alt="fzf-revamped: list"><br><sub><code>list</code>。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/json.png" alt="fzf-revamped: list --json"><br><sub><code>list --json</code>。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/plain-menu.png" alt="fzf-revamped: gum なしのメニュー"><br><sub>gum なしのメニュー。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/plain-apply.png" alt="fzf-revamped: メニューからの apply"><br><sub>メニューからの <code>apply</code>。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/version.png" alt="fzf-revamped: バージョン"><br><sub>バージョン。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"><img src="screens/error.png" alt="fzf-revamped: 不明なコマンド"><br><sub>不明なコマンド。<code>stills.tape</code>より</sub></td>
-</tr>
-<tr>
 <td width="50%" valign="top"><img src="screens/themes.png" alt="fzf-revamped: 6 つのテーマのヘッダー"><br><sub>6 つのテーマのヘッダー。<code>themes.tape</code>より</sub></td>
-<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped: ヘルプ"><br><sub>ヘルプ。<code>help.tape</code>より</sub></td>
 </tr>
 <tr>
+<td width="50%" valign="top"><img src="screens/help.png" alt="fzf-revamped: ヘルプ"><br><sub>ヘルプ。<code>help.tape</code>より</sub></td>
 <td width="50%" valign="top"><img src="screens/accent.png" alt="fzf-revamped: FZF_REVAMPED_ACCENT によるアクセント"><br><sub><code>FZF_REVAMPED_ACCENT</code> によるアクセント。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
 <td width="50%" valign="top"></td>
 </tr>
 </table>

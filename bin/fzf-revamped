@@ -54,7 +54,7 @@ usage:
                                      named after what was typed
   fzf-revamped urls [open|copy]      open a URL on the screen, or copy it
                                      into a tmux buffer
-  fzf-revamped cheatsheet            browse every key binding
+  fzf-revamped cheatsheet            browse the key bindings and run one
   fzf-revamped process [SIGNAL]      send a signal to a process, TERM by
                                      default, after a confirmation
   fzf-revamped rename [session|window]
