@@ -13,11 +13,17 @@ os="$(uname -s)"
 
 darwin_dirs() {
   for formula in "$@"; do
+    found=0
     for dir in "${prefix}/opt/${formula}/libexec/gnubin" "${prefix}/opt/${formula}/libexec/uubin"; do
       if [ -d "${dir}" ]; then
         printf '%s\n' "${dir}"
+        found=1
       fi
     done
+    if [ "${found}" -eq 0 ]; then
+      printf 'toolset: %s is not installed, so the %s toolset cannot be put first. run brew bundle.\n' "${formula}" "${toolset}" >&2
+      exit 1
+    fi
   done
 }
 

@@ -187,14 +187,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-      - name: Install shells and tools
-        run: brew install --formula bats-core bash dash-shell zsh tmux
-      - name: Install the Homebrew toolset
-        if: matrix.toolset == 'homebrew'
-        run: brew install --formula coreutils findutils gnu-sed gawk grep diffutils
-      - name: Install the uutils toolset
-        if: matrix.toolset == 'uutils'
-        run: brew install --formula uutils-coreutils uutils-diffutils uutils-findutils
+      - name: Install the tools in the Brewfile
+        env:
+          HOMEBREW_REVAMPED_TOOLSET: ${{ matrix.toolset }}
+        run: brew bundle --file Brewfile
       - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199  # v1.338.0
         if: matrix.coverage
         with:
