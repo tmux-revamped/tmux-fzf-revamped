@@ -267,6 +267,7 @@ bats_require_minimum_version 1.5.0
 
 @test "urls - on a screen without a URL its key says so, where the popup used to close at once" {
   # Arrange
+  reader
   bound_on url_key U
   answers ""
 
@@ -280,6 +281,7 @@ bats_require_minimum_version 1.5.0
 
 @test "urls - the command says so too when the screen holds no URL" {
   # Arrange
+  reader
   answers ""
 
   # Act

@@ -42,6 +42,11 @@ wait_for() {
   return 1
 }
 
+reader() {
+  tmux respawn-pane -k -t test:0.0 "echo ready; exec cat"
+  wait_for tmux_shows test:0.0 ready
+}
+
 attached() {
   local clients
   clients=$(tmux list-clients -F x 2>/dev/null)

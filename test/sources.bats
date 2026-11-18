@@ -12,11 +12,6 @@ buffer_names() {
   paste -sd ' ' - <<<"${names}"
 }
 
-reader() {
-  tmux respawn-pane -k -t test:0.0 "echo ready; exec cat"
-  wait_for tmux_shows test:0.0 ready
-}
-
 projects_file() {
   PROJECTS="${BATS_TEST_TMPDIR}/projects"
   printf '%s\n' "$@" >"${PROJECTS}"
