@@ -79,6 +79,17 @@ sent() {
   [[ "${output}" = "2" ]]
 }
 
+@test "publish.sh - chars counts a character whose later bytes are below 0xA0 once" {
+  # Arrange
+  local script='for word in "Größe" "日本" "naïve ß 日"; do revamped_publish_count "${word}"; printf "[%s]" "${revamped_publish_count_out}"; done'
+
+  # Act
+  lib_run publish "${script}"
+
+  # Assert
+  [[ "${output}" == "[5][2][9]" ]]
+}
+
 @test "publish.sh - chars keeps the caller's locale" {
   # Arrange
   export LC_ALL=POSIX

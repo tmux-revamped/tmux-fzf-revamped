@@ -40,8 +40,8 @@ revamped_publish_count() {
   revamped_publish_count_out=0
   while [ -n "${revamped_publish_count_rest}" ]; do
     revamped_publish_count_tail="${revamped_publish_count_rest#?}"
-    case "${revamped_publish_count_rest%"${revamped_publish_count_tail}"}" in
-    ["${REVAMPED_PUBLISH_CONTINUATION}"]) ;;
+    case "${REVAMPED_PUBLISH_CONTINUATION}" in
+    *"${revamped_publish_count_rest%"${revamped_publish_count_tail}"}"*) : ;;
     *) revamped_publish_count_out=$((revamped_publish_count_out + 1)) ;;
     esac
     revamped_publish_count_rest="${revamped_publish_count_tail}"
