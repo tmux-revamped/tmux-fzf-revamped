@@ -225,6 +225,9 @@ fzf_revamped_plan() {
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_multikill_key}" "multi-kill session"
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_zoxide_key}" zoxide
   fzf_revamped_plan_picker "${FZF_REVAMPED_S_move_key}" "move-window move"
+  fzf_revamped_plan_picker "${FZF_REVAMPED_S_arrange_key}" arrange
+  fzf_revamped_plan_picker "${FZF_REVAMPED_S_buffer_key}" "buffers paste"
+  fzf_revamped_plan_picker "${FZF_REVAMPED_S_projects_key}" projects
   ! fzf_revamped_bound "${FZF_REVAMPED_S_last_key}" || fzf_revamped_emit bind-key "${FZF_REVAMPED_S_last_key}" run-shell "${FZF_REVAMPED_TOOL} last"
   fzf_revamped_plan_broadcast
 }
@@ -304,11 +307,18 @@ fzf_revamped_target_kind() {
   esac
 }
 
+fzf_revamped_session_names() {
+  sed -e h -e '/^\/*$/!s|/*$||' -e '/^\/*$/!s|.*/||' -e 's/[.: ]/_/g' -e G -e "s/\n/${FZF_REVAMPED_TAB}/"
+}
+
 fzf_revamped_session_name() {
-  fzf_revamped_session_name_path="${1%/}"
-  fzf_revamped_session_name_base="${fzf_revamped_session_name_path##*/}"
-  [ -n "${fzf_revamped_session_name_base}" ] || fzf_revamped_session_name_base="$1"
-  printf '%s\n' "${fzf_revamped_session_name_base}" | sed 's/[.: ]/_/g'
+  fzf_revamped_session_name_row=$(printf '%s\n' "$1" | fzf_revamped_session_names)
+  printf '%s\n' "${fzf_revamped_session_name_row%%"${FZF_REVAMPED_TAB}"*}"
+}
+
+fzf_revamped_open_session() {
+  fzf_revamped_open_session_start=$(printf '%s\n' "$2" | sed 's/#/##/g')
+  tmux new-session -A -d -s "$1" -c "${fzf_revamped_open_session_start}" \; switch-client -t "$1" 2>/dev/null || :
 }
 
 fzf_revamped_mru_sort() {
@@ -427,10 +437,18 @@ fzf_revamped_opener() {
   fi
 }
 
+fzf_revamped_nothing() {
+  fzf_revamped_nothing_text=$(printf '%s\n' "$1" | sed 's/#/##/g')
+  tmux display-message "fzf-revamped: ${fzf_revamped_nothing_text}" 2>/dev/null || :
+}
+
 fzf_revamped_urls() {
   fzf_revamped_urls_text=$(tmux capture-pane -p 2>/dev/null) || fzf_revamped_urls_text=""
   fzf_revamped_urls_list=$(printf '%s\n' "${fzf_revamped_urls_text}" | fzf_revamped_extract_urls)
-  [ -n "${fzf_revamped_urls_list}" ] || return 0
+  if [ -z "${fzf_revamped_urls_list}" ]; then
+    fzf_revamped_nothing "no URL on this screen"
+    return 0
+  fi
   fzf_revamped_urls_pick=$(printf '%s\n' "${fzf_revamped_urls_list}" | fzf_revamped_fzf) || fzf_revamped_urls_pick=""
   [ -n "${fzf_revamped_urls_pick}" ] || return 0
   if [ "${1:-open}" = copy ]; then
@@ -529,12 +547,14 @@ fzf_revamped_broadcast() {
 
 fzf_revamped_zoxide() {
   fzf_revamped_zoxide_dirs=$(zoxide query -l 2>/dev/null) || fzf_revamped_zoxide_dirs=""
-  [ -n "${fzf_revamped_zoxide_dirs}" ] || return 0
+  if [ -z "${fzf_revamped_zoxide_dirs}" ]; then
+    fzf_revamped_nothing "zoxide listed no folder"
+    return 0
+  fi
   fzf_revamped_zoxide_pick=$(printf '%s\n' "${fzf_revamped_zoxide_dirs}" | fzf_revamped_fzf) || fzf_revamped_zoxide_pick=""
   [ -n "${fzf_revamped_zoxide_pick}" ] || return 0
   fzf_revamped_zoxide_name=$(fzf_revamped_session_name "${fzf_revamped_zoxide_pick}")
-  fzf_revamped_zoxide_start=$(printf '%s\n' "${fzf_revamped_zoxide_pick}" | sed 's/#/##/g')
-  tmux new-session -A -d -s "${fzf_revamped_zoxide_name}" -c "${fzf_revamped_zoxide_start}" \; switch-client -t "${fzf_revamped_zoxide_name}" 2>/dev/null || :
+  fzf_revamped_open_session "${fzf_revamped_zoxide_name}" "${fzf_revamped_zoxide_pick}"
 }
 
 fzf_revamped_last() {

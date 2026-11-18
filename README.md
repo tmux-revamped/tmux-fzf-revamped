@@ -100,8 +100,9 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_popup_border` | `rounded` | Popup border on tmux 3.4 and later: `rounded`, `single`, `double`, `heavy`, `simple`, `padded` or `none` |
 | `@fzf_revamped_preview` | `off` | `on` or `1` shows the pane under the cursor in the switch pickers |
 | `@fzf_revamped_mru` | `off` | `on` orders sessions by their last attach |
+| `@fzf_revamped_projects` | `~/.config/fzf-revamped/projects` | The file the projects picker reads, one folder per line; under `XDG_CONFIG_HOME` when that is set |
 
-Every option is also a command option with dashes, such as `--session-key S`, and an environment variable, such as `FZF_REVAMPED_SESSION_KEY`; the command line wins over the environment, and the environment over the tmux option. A `preview` or `mru` given as a tmux option is read when a picker runs, and one given to `fzf-revamped apply` on the command line or in the environment rides on the keys it binds. An empty tmux option means its default.
+Every option is also a command option with dashes, such as `--session-key S`, and an environment variable, such as `FZF_REVAMPED_SESSION_KEY`; the command line wins over the environment, and the environment over the tmux option. A `preview`, `mru` or `projects` given as a tmux option is read when a picker runs, and one given to `fzf-revamped apply` on the command line or in the environment rides on the keys it binds. An empty tmux option means its default.
 
 <a id="pickers"></a>
 
@@ -125,8 +126,13 @@ Every option is also a command option with dashes, such as `--session-key S`, an
 | `@fzf_revamped_zoxide_key` | `zoxide` | Opens a session at a zoxide folder |
 | `@fzf_revamped_last_key` | `last` | Switches to the last session, with no popup |
 | `@fzf_revamped_move_key` | `move-window move` | Moves the window picked to a session typed at a prompt; `move-window link` links it |
+| `@fzf_revamped_arrange_key` | `arrange` | Asks for `join`, `break`, `swap`, `layout` or `resize`, then brings a pane into this window, moves one into its own window, swaps one with this pane, lays this window out, or moves an edge of this pane by 5, 10 or 20 cells; `arrange join` and the others skip the first list |
+| `@fzf_revamped_buffer_key` | `buffers paste` | Pastes the tmux buffer picked into this pane; `buffers delete` deletes it |
+| `@fzf_revamped_projects_key` | `projects` | Opens a session at a folder from the projects file, or switches to it when it is running, marked with `*` |
 
 `window kill`, `pane kill`, `multi-kill window` and `multi-kill pane` have no key and run from the command line. Every list line carries its target as a hidden first column, so a window named `feature/login` or a session with a space still resolves.
+
+The projects file holds one folder per line. A line with a `*` lists every folder it matches, `~` is the home folder, and a line that starts with `#` is skipped. Each session is named after its folder.
 
 <a id="screens"></a>
 
@@ -179,6 +185,14 @@ Every option is also a command option with dashes, such as `--session-key S`, an
 </tr>
 <tr>
 <td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped: The move prompt for a window"><br><sub>The move prompt for a window, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/arrange.png" alt="fzf-revamped: The pane arranger's actions"><br><sub>The pane arranger's actions, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/arrange-layout.png" alt="fzf-revamped: A window laid out from the arranger"><br><sub>A window laid out from the arranger, from <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/buffers.png" alt="fzf-revamped: The tmux buffers"><br><sub>The tmux buffers, from <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/projects.png" alt="fzf-revamped: The project folders, running sessions marked"><br><sub>The project folders, running sessions marked, from <code>stills.tape</code></sub></td>
 <td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped: The menu"><br><sub>The menu, from <code>stills.tape</code></sub></td>
 </tr>
 <tr>
@@ -234,6 +248,8 @@ The plugin is POSIX `sh`. CI runs every suite on each row below.
 | `make coverage` | bashcov on this Mac and in the Ubuntu container, merged and gated at 100 percent |
 | `make screens` | The screens above, recorded from the real plugin inside tmux with VHS, on macOS |
 | `make install` | The command, its man page and completions under `PREFIX` |
+
+On macOS, `brew bundle` installs every tool these targets call, from the [`Brewfile`](Brewfile).
 
 Commits follow the conventional commit format and go straight to `main`. After a green `ci` run on `main`, `release.yml` runs semantic-release: every `feat` or `fix` since the last tag publishes a release, stamps the version constant and adds the notes to [`CHANGELOG.md`](CHANGELOG.md).
 

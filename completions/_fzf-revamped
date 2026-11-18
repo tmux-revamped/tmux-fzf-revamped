@@ -20,6 +20,9 @@ _fzf_revamped() {
     'zoxide:open a session at a zoxide folder'
     'last:switch to the last session'
     'move-window:move or link a window'
+    'arrange:join, break, swap, lay out or resize panes'
+    'buffers:paste or delete a tmux buffer'
+    'projects:open a session at a project folder'
     'preview:print a pane'
     'doctor:check this machine'
     'version:print the version'
@@ -45,11 +48,15 @@ _fzf_revamped() {
     '--zoxide-key[key of the zoxide]:value:' \
     '--last-key[key of the last]:value:' \
     '--move-key[key of the move]:value:' \
+    '--arrange-key[key of the arrange]:value:' \
+    '--buffer-key[key of the buffers]:value:' \
+    '--projects-key[key of the projects]:value:' \
     '--popup-width[popup width]:value:' \
     '--popup-height[popup height]:value:' \
     '--popup-border[popup border]:value:(rounded single double heavy simple padded none)' \
     '--preview[preview the pane]:value:(on off)' \
     '--mru[sessions by last attach]:value:(on off)' \
+    '--projects[the projects file]:file:_files' \
     '1:command:->command'
 
   if [[ "${state}" == command ]]; then

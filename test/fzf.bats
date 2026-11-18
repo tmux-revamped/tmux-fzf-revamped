@@ -61,13 +61,13 @@ refuse() {
 
 @test "fzf - URLs are found, trimmed and kept once in first-seen order" {
   # Arrange
-  local script='printf "%s\n" "go https://b.io/x, then ftp://f.io/y and file:///tmp/z." "again https://b.io/x" "none here" | fzf_revamped_extract_urls | tr "\n" " "'
+  local script='printf "%s\n" "go https://github.com/tmux-revamped/tmux-fzf-revamped, then ftp://ftp.gnu.org/gnu/ and file:///tmp/z." "again https://github.com/tmux-revamped/tmux-fzf-revamped" "none here" | fzf_revamped_extract_urls | tr "\n" " "'
 
   # Act
   lib_run fzf "${script}"
 
   # Assert
-  [[ "${output}" == "https://b.io/x ftp://f.io/y file:///tmp/z " ]]
+  [[ "${output}" == "https://github.com/tmux-revamped/tmux-fzf-revamped ftp://ftp.gnu.org/gnu/ file:///tmp/z " ]]
 }
 
 @test "fzf - a signal is normalised, and anything unknown is TERM" {

@@ -4,7 +4,7 @@ Hide
 Type "tmux -L revamped-screens attach -t demo"
 Enter
 Sleep 2s
-Type "tmux rename-window shell; tmux new-window -d -n logs; tmux new-session -d -s api -n server; tmux new-session -d -s web -n client; tmux new-window -d -t web -n tests; clear; echo docs at https://example.com/fzf-revamped"
+Type "tmux rename-window shell; tmux new-window -d -n logs; tmux new-session -d -s api -n server; tmux new-session -d -s web -n client; tmux new-window -d -t web -n tests; clear; echo docs at https://github.com/tmux-revamped/tmux-fzf-revamped"
 Enter
 Sleep 1500ms
 Show

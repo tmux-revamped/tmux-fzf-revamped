@@ -35,6 +35,18 @@ _fzf_revamped() {
     COMPREPLY=($(compgen -W "move link" -- "${cur}"))
     return
     ;;
+  arrange)
+    COMPREPLY=($(compgen -W "join break swap layout resize" -- "${cur}"))
+    return
+    ;;
+  buffers)
+    COMPREPLY=($(compgen -W "paste delete" -- "${cur}"))
+    return
+    ;;
+  --projects)
+    COMPREPLY=($(compgen -f -- "${cur}"))
+    return
+    ;;
   rename)
     COMPREPLY=($(compgen -W "session window" -- "${cur}"))
     return
@@ -43,13 +55,13 @@ _fzf_revamped() {
     COMPREPLY=($(compgen -W "session window pane" -- "${cur}"))
     return
     ;;
-  --palette-key | --session-key | --window-key | --pane-key | --kill-key | --tree-key | --create-key | --url-key | --cheatsheet-key | --process-key | --rename-key | --multikill-key | --broadcast-key | --zoxide-key | --last-key | --move-key | --popup-width | --popup-height)
+  --palette-key | --session-key | --window-key | --pane-key | --kill-key | --tree-key | --create-key | --url-key | --cheatsheet-key | --process-key | --rename-key | --multikill-key | --broadcast-key | --zoxide-key | --last-key | --move-key | --arrange-key | --buffer-key | --projects-key | --popup-width | --popup-height)
     return
     ;;
   *) ;;
   esac
 
-  COMPREPLY=($(compgen -W "apply list session window pane tree create urls palette cheatsheet process rename multi-kill broadcast zoxide last move-window preview doctor version help --json --theme --palette-key --session-key --window-key --pane-key --kill-key --tree-key --create-key --url-key --cheatsheet-key --process-key --rename-key --multikill-key --broadcast-key --zoxide-key --last-key --move-key --popup-width --popup-height --popup-border --preview --mru" -- "${cur}"))
+  COMPREPLY=($(compgen -W "apply list session window pane tree create urls palette cheatsheet process rename multi-kill broadcast zoxide last move-window arrange buffers projects preview doctor version help --json --theme --palette-key --session-key --window-key --pane-key --kill-key --tree-key --create-key --url-key --cheatsheet-key --process-key --rename-key --multikill-key --broadcast-key --zoxide-key --last-key --move-key --arrange-key --buffer-key --projects-key --popup-width --popup-height --popup-border --preview --mru --projects" -- "${cur}"))
 }
 
 complete -F _fzf_revamped fzf-revamped

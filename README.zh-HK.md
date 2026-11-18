@@ -100,8 +100,9 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_popup_border` | `rounded` | tmux 3.4 或以後的彈出視窗邊框：`rounded`、`single`、`double`、`heavy`、`simple`、`padded` 或 `none` |
 | `@fzf_revamped_preview` | `off` | `on` 或 `1` 時在切換選擇器中顯示游標下的窗格 |
 | `@fzf_revamped_mru` | `off` | `on` 時按最後連接時間排列工作階段 |
+| `@fzf_revamped_projects` | `~/.config/fzf-revamped/projects` | 專案選擇器讀取的檔案，每行一個資料夾；設定了 `XDG_CONFIG_HOME` 時位於其下 |
 
-每個選項亦可寫成以短橫線連接的命令選項，例如 `--session-key S`，以及環境變數，例如 `FZF_REVAMPED_SESSION_KEY`；命令列優先於環境變數，環境變數優先於 tmux 選項。以 tmux 選項給出的 `preview` 和 `mru` 在選擇器執行時讀取；透過命令列或環境變數傳給 `fzf-revamped apply` 的值會帶到它綁定的按鍵上。空的 tmux 選項表示使用預設值。
+每個選項亦可寫成以短橫線連接的命令選項，例如 `--session-key S`，以及環境變數，例如 `FZF_REVAMPED_SESSION_KEY`；命令列優先於環境變數，環境變數優先於 tmux 選項。以 tmux 選項給出的 `preview`、`mru` 和 `projects` 在選擇器執行時讀取；透過命令列或環境變數傳給 `fzf-revamped apply` 的值會帶到它綁定的按鍵上。空的 tmux 選項表示使用預設值。
 
 <a id="選擇器"></a>
 
@@ -125,8 +126,13 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_zoxide_key` | `zoxide` | 在 zoxide 資料夾開啟工作階段 |
 | `@fzf_revamped_last_key` | `last` | 不用彈出視窗，切換到上一個工作階段 |
 | `@fzf_revamped_move_key` | `move-window move` | 把選取的視窗移到提示中輸入的工作階段；`move-window link` 則連結它 |
+| `@fzf_revamped_arrange_key` | `arrange` | 先詢問 `join`、`break`、`swap`、`layout` 或 `resize`，然後把一個窗格併入目前視窗、把一個窗格移到獨立的視窗、與目前窗格交換、重新排列目前視窗，或把目前窗格的邊緣移動 5、10 或 20 格；`arrange join` 等寫法會略過第一個列表 |
+| `@fzf_revamped_buffer_key` | `buffers paste` | 把選取的 tmux 緩衝區貼上到目前窗格；`buffers delete` 則刪除它 |
+| `@fzf_revamped_projects_key` | `projects` | 在專案檔案列出的資料夾開啟工作階段；已在執行的工作階段帶 `*` 標記，選取後切換過去 |
 
 `window kill`、`pane kill`、`multi-kill window` 和 `multi-kill pane` 沒有按鍵，由命令列執行。列表的每一行都把目標放在隱藏的第一欄，所以名為 `feature/login` 的視窗或含空格的工作階段亦能正確定位。
+
+專案檔案每行寫一個資料夾。帶 `*` 的行會列出它符合的所有資料夾，`~` 表示主目錄，以 `#` 開頭的行會被略過。工作階段以資料夾名稱命名。
 
 <a id="畫面"></a>
 
@@ -179,6 +185,14 @@ set -g @fzf_revamped_last_key 'L'
 </tr>
 <tr>
 <td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped：視窗移動提示"><br><sub>視窗移動提示，來自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/arrange.png" alt="fzf-revamped：窗格整理的操作列表"><br><sub>窗格整理的操作列表，來自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/arrange-layout.png" alt="fzf-revamped：以整理功能重新排列的視窗"><br><sub>以整理功能重新排列的視窗，來自 <code>stills.tape</code></sub></td>
+<td width="50%" valign="top"><img src="screens/buffers.png" alt="fzf-revamped：tmux 緩衝區列表"><br><sub>tmux 緩衝區列表，來自 <code>stills.tape</code></sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/projects.png" alt="fzf-revamped：專案資料夾，執行中的工作階段帶標記"><br><sub>專案資料夾，執行中的工作階段帶標記，來自 <code>stills.tape</code></sub></td>
 <td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped：選單"><br><sub>選單，來自 <code>stills.tape</code></sub></td>
 </tr>
 <tr>
@@ -234,6 +248,8 @@ set -g @fzf_revamped_last_key 'L'
 | `make coverage` | 在這部 Mac 和 Ubuntu 容器中執行 bashcov，合併後以 100% 為門檻 |
 | `make screens` | 以 VHS 在 tmux 中從真實插件錄製上述畫面，在 macOS 上執行 |
 | `make install` | 把指令、man 手冊和自動完成安裝到 `PREFIX` 下 |
+
+在 macOS 上，執行 `brew bundle` 會根據 [`Brewfile`](Brewfile) 安裝這些目標用到的所有工具。
 
 提交遵循 Conventional Commits 格式，直接進入 `main`。`main` 上的 `ci` 通過後，`release.yml` 會執行 semantic-release：自上一個標籤以來的每個 `feat` 或 `fix` 都會發佈新版本，更新版本常數，並把說明寫入 [`CHANGELOG.md`](CHANGELOG.md)。
 

@@ -25,6 +25,17 @@ usage:
   fzf-revamped last                  switch to the last session
   fzf-revamped move-window [move|link]
                                      move or link a window to a session
+  fzf-revamped arrange [join|break|swap|layout|resize]
+                                     bring a pane into this window, move
+                                     one into its own window, swap one with
+                                     this pane, lay this window out, or
+                                     move an edge of this pane; asks which
+                                     when none is given
+  fzf-revamped buffers [paste|delete]
+                                     paste a tmux buffer into this pane, or
+                                     delete it
+  fzf-revamped projects              open a session at a folder from the
+                                     projects file; a running one is marked
   fzf-revamped preview TARGET        print a pane, for the switch preview
   fzf-revamped doctor                check this machine
   fzf-revamped version               print the version
@@ -63,12 +74,17 @@ tmux options:
   @fzf_revamped_zoxide_key      key of the zoxide sessions (unbound)
   @fzf_revamped_last_key        key of the last session (unbound)
   @fzf_revamped_move_key        key of the window mover (unbound)
+  @fzf_revamped_arrange_key     key of the pane arranger (unbound)
+  @fzf_revamped_buffer_key      key of the buffer picker (unbound)
+  @fzf_revamped_projects_key    key of the project sessions (unbound)
   @fzf_revamped_popup_width     popup width (60%)
   @fzf_revamped_popup_height    popup height (50%)
   @fzf_revamped_popup_border    rounded, single, double, heavy, simple,
                                 padded or none, on tmux 3.4 (rounded)
   @fzf_revamped_preview         on shows the pane under the cursor (off)
   @fzf_revamped_mru             on orders sessions by last attach (off)
+  @fzf_revamped_projects        the projects file
+                                (~<path>
   @revamped_theme               the family look (kodougu)
 
 notes:
@@ -76,10 +92,12 @@ notes:
   binding goes to tmux in one call. A key opens a popup, or a window before
   tmux 3.2, that runs one of the commands above. Every list line carries the
   target as a hidden first column, so a name with a space or a slash still
-  resolves. A preview or mru given as a tmux option is read when a picker
-  runs; one given to apply on the command line or in the environment rides on
-  the keys it binds. The broadcast prompt keeps its text in
-  @fzf_revamped_broadcast_text until the pane picker reads it.
+  resolves. A preview, mru or projects given as a tmux option is read when a
+  picker runs; one given to apply on the command line or in the environment
+  rides on the keys it binds. The broadcast prompt keeps its text in
+  @fzf_revamped_broadcast_text until the pane picker reads it. The projects
+  file holds one folder per line: a line with a * lists every folder it
+  matches, ~ is the home folder, and a line that starts with # is skipped.
 
 examples:
   fzf-revamped list

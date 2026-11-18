@@ -4,7 +4,7 @@ Hide
 Type "tmux -L revamped-screens attach -t demo"
 Enter
 Sleep 2s
-Type "tmux rename-window shell; tmux new-window -d -n logs; tmux new-session -d -s api -n server; tmux new-session -d -s web -n client; tmux new-window -d -t web -n tests; clear; echo docs at https://example.com/fzf-revamped"
+Type "tmux rename-window shell; tmux new-window -d -n logs; tmux new-session -d -s api -n server; tmux new-session -d -s web -n client; tmux new-window -d -t web -n tests; clear; echo docs at https://github.com/tmux-revamped/tmux-fzf-revamped"
 Enter
 Sleep 1500ms
 Show
@@ -253,6 +253,69 @@ Hide
 Type "tmux kill-pane -a; clear"
 Enter
 Show
+Hide
+Type "tmux split-window -d; tmux split-window -d; clear"
+Enter
+Sleep 800ms
+Show
+Hide
+Ctrl+]
+Type@5ms "prefix A, layout, Enter, even-horizontal, Enter"
+Enter
+Show
+Ctrl+B
+Type@1ms "A"
+Sleep 2s
+Screenshot arrange.png
+Sleep 800ms
+Type "layout"
+Sleep 800ms
+Enter
+Sleep 1500ms
+Type "even-horizontal"
+Sleep 800ms
+Enter
+Sleep 1500ms
+Screenshot arrange-layout.png
+Sleep 800ms
+Hide
+Type "tmux kill-pane -a; tmux set-buffer -b deploy 'kubectl rollout status deploy/api'; tmux set-buffer -b greeting 'echo hello from a buffer'; clear"
+Enter
+Sleep 800ms
+Show
+Hide
+Ctrl+]
+Type@5ms "prefix Y, greeting, Enter, Enter"
+Enter
+Show
+Ctrl+B
+Type@1ms "Y"
+Sleep 2s
+Screenshot buffers.png
+Sleep 800ms
+Type "greeting"
+Sleep 800ms
+Enter
+Sleep 1500ms
+Enter
+Sleep 1s
+Hide
+Type "clear"
+Enter
+Sleep 800ms
+Show
+Hide
+Ctrl+]
+Type@5ms "prefix J, Escape"
+Enter
+Show
+Ctrl+B
+Type@1ms "J"
+Sleep 2s
+Screenshot projects.png
+Sleep 800ms
+Escape
+Sleep 1500ms
 Hide
 Ctrl+]
 Type@5ms "fzf-revamped list, Enter"

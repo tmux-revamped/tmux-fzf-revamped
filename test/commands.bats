@@ -193,6 +193,19 @@ plain_tty() {
   [[ -z "${output}" ]]
 }
 
+@test "commands - doctor names the projects file when one exists" {
+  # Arrange
+  export XDG_CONFIG_HOME="${BATS_TEST_TMPDIR}/config"
+  mkdir -p "${XDG_CONFIG_HOME}/fzf-revamped"
+  : >"${XDG_CONFIG_HOME}/fzf-revamped/projects"
+
+  # Act
+  tool doctor
+
+  # Assert
+  [[ "${output}" =~ projects\ +ok\ +"${XDG_CONFIG_HOME}/fzf-revamped/projects" ]]
+}
+
 @test "commands - doctor reports a missing picker and a key someone else holds" {
   # Arrange
   mkdir -p "${BATS_TEST_TMPDIR}/stubs"

@@ -100,8 +100,9 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_popup_border` | `rounded` | tmux 3.4 以降のポップアップの枠線。`rounded`、`single`、`double`、`heavy`、`simple`、`padded`、`none` |
 | `@fzf_revamped_preview` | `off` | `on` か `1` で、切り替えピッカーにカーソル下のペインを表示します |
 | `@fzf_revamped_mru` | `off` | `on` でセッションを最後に接続した順に並べます |
+| `@fzf_revamped_projects` | `~/.config/fzf-revamped/projects` | プロジェクトの選択画面が読むファイル。1 行に 1 つのフォルダを書きます。`XDG_CONFIG_HOME` があればその下を使います |
 
-どのオプションも、ダッシュ区切りのコマンドオプション（例 `--session-key S`）と環境変数（例 `FZF_REVAMPED_SESSION_KEY`）で指定できます。優先順位はコマンドライン、環境変数、tmux オプションの順です。tmux オプションで指定した `preview` と `mru` は選択画面を開くたびに読まれ、`fzf-revamped apply` にコマンドラインまたは環境変数で渡したものは割り当てたキーに引き継がれます。空の tmux オプションは既定値を意味します。
+どのオプションも、ダッシュ区切りのコマンドオプション（例 `--session-key S`）と環境変数（例 `FZF_REVAMPED_SESSION_KEY`）で指定できます。優先順位はコマンドライン、環境変数、tmux オプションの順です。tmux オプションで指定した `preview`、`mru`、`projects` は選択画面を開くたびに読まれ、`fzf-revamped apply` にコマンドラインまたは環境変数で渡したものは割り当てたキーに引き継がれます。空の tmux オプションは既定値を意味します。
 
 <a id="ピッカー"></a>
 
@@ -125,8 +126,13 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_zoxide_key` | `zoxide` | zoxide のフォルダーでセッションを開きます |
 | `@fzf_revamped_last_key` | `last` | ポップアップなしで前のセッションに切り替えます |
 | `@fzf_revamped_move_key` | `move-window move` | 選んだウィンドウを、プロンプトで入力したセッションに移動します。`move-window link` はリンクします |
+| `@fzf_revamped_arrange_key` | `arrange` | `join`、`break`、`swap`、`layout`、`resize` のどれかを尋ねてから、ペインをこのウィンドウに取り込む、ペインを独立したウィンドウに移す、このペインと入れ替える、このウィンドウのレイアウトを変える、このペインの端を 5、10、20 セル動かす、のいずれかを行います。`arrange join` などと指定すると最初の一覧を省きます |
+| `@fzf_revamped_buffer_key` | `buffers paste` | 選んだ tmux バッファをこのペインに貼り付けます。`buffers delete` は削除します |
+| `@fzf_revamped_projects_key` | `projects` | プロジェクトファイルにあるフォルダでセッションを開きます。すでに動いているものは `*` 付きで表示され、そこに切り替えます |
 
 `window kill`、`pane kill`、`multi-kill window`、`multi-kill pane` にはキーがなく、コマンドラインから実行します。一覧の各行は対象を隠れた先頭列に持つので、`feature/login` という名前のウィンドウや空白を含むセッションも正しく選べます。
+
+プロジェクトファイルには 1 行に 1 つのフォルダを書きます。`*` を含む行は一致するすべてのフォルダを並べ、`~` はホームフォルダを表し、`#` で始まる行は読み飛ばします。セッション名はフォルダ名から付けます。
 
 <a id="画面"></a>
 
@@ -179,6 +185,14 @@ set -g @fzf_revamped_last_key 'L'
 </tr>
 <tr>
 <td width="50%" valign="top"><img src="screens/move.png" alt="fzf-revamped: ウィンドウ移動のプロンプト"><br><sub>ウィンドウ移動のプロンプト。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/arrange.png" alt="fzf-revamped: ペイン整理の操作一覧"><br><sub>ペイン整理の操作一覧。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/arrange-layout.png" alt="fzf-revamped: 整理機能でレイアウトを変えたウィンドウ"><br><sub>整理機能でレイアウトを変えたウィンドウ。<code>stills.tape</code>より</sub></td>
+<td width="50%" valign="top"><img src="screens/buffers.png" alt="fzf-revamped: tmux バッファの一覧"><br><sub>tmux バッファの一覧。<code>stills.tape</code>より</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="screens/projects.png" alt="fzf-revamped: プロジェクトのフォルダ。動いているセッションには印が付きます"><br><sub>プロジェクトのフォルダ。動いているセッションには印が付きます。<code>stills.tape</code>より</sub></td>
 <td width="50%" valign="top"><img src="screens/menu.png" alt="fzf-revamped: メニュー"><br><sub>メニュー。<code>stills.tape</code>より</sub></td>
 </tr>
 <tr>
@@ -234,6 +248,8 @@ set -g @fzf_revamped_last_key 'L'
 | `make coverage` | この Mac と Ubuntu のコンテナで bashcov を実行し、合算して 100 パーセントで判定します |
 | `make screens` | 上の画面を、本物のプラグインから tmux の中で VHS で録画します。macOS で実行します |
 | `make install` | コマンド、manページ、補完を `PREFIX` の下に置きます |
+
+macOS では、`brew bundle` を実行すると、これらのターゲットが使うツールがすべて [`Brewfile`](Brewfile) からインストールされます。
 
 コミットは Conventional Commits の形式に従い、そのまま `main` に入ります。`main` で `ci` が成功すると、`release.yml` が semantic-release を実行します。前回のタグ以降に `feat` か `fix` があればリリースを公開し、バージョン定数を更新し、変更内容を [`CHANGELOG.md`](CHANGELOG.md) に追加します。
 

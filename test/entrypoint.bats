@@ -213,19 +213,19 @@ bats_require_minimum_version 1.5.0
   # Arrange
   printf '#!/bin/sh\nprintf "%%s\\n" "$1" >"%s"\n' "${BATS_TEST_TMPDIR}/opened" >"${BATS_TEST_TMPDIR}/stubs/xdg-open"
   chmod +x "${BATS_TEST_TMPDIR}/stubs/xdg-open"
-  tmux send-keys -t test:0 'echo see https://example.com/doc.' Enter
-  wait_for tmux_shows test:0 'see https://example.com/doc.'
-  answers 'https://example.com/doc' -- 'https://example.com/doc'
+  tmux send-keys -t test:0 'echo see https://github.com/tmux-revamped/tmux-fzf-revamped.' Enter
+  wait_for tmux_shows test:0 'see https://github.com/tmux-revamped/tmux-fzf-revamped.'
+  answers 'https://github.com/tmux-revamped/tmux-fzf-revamped' -- 'https://github.com/tmux-revamped/tmux-fzf-revamped'
 
   # Act
   tool urls open
 
   # Assert
   run cat "${BATS_TEST_TMPDIR}/opened"
-  [[ "${output}" == "https://example.com/doc" ]]
+  [[ "${output}" == "https://github.com/tmux-revamped/tmux-fzf-revamped" ]]
   tool urls copy
   run tmux show-buffer
-  [[ "${output}" == "https://example.com/doc" ]]
+  [[ "${output}" == "https://github.com/tmux-revamped/tmux-fzf-revamped" ]]
 }
 
 @test "palette - the picked command runs" {

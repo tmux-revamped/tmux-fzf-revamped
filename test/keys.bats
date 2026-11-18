@@ -177,16 +177,16 @@ bats_require_minimum_version 1.5.0
   # Arrange
   printf '#!/bin/sh\nprintf "%%s\\n" "$1" >"%s"\n' "${BATS_TEST_TMPDIR}/opened" >"${BATS_TEST_TMPDIR}/stubs/xdg-open"
   chmod +x "${BATS_TEST_TMPDIR}/stubs/xdg-open"
-  tmux send-keys -t test:0 'echo see https://example.com/key.' Enter
-  wait_for tmux_shows test:0 'see https://example.com/key.'
+  tmux send-keys -t test:0 'echo see https://github.com/tmux-revamped/tmux-fzf-revamped/issues.' Enter
+  wait_for tmux_shows test:0 'see https://github.com/tmux-revamped/tmux-fzf-revamped/issues.'
   bound_on url_key U
-  answers 'https://example.com/key'
+  answers 'https://github.com/tmux-revamped/tmux-fzf-revamped/issues'
 
   # Act
   command tmux -S "${HOST}" send-keys -t host C-b U
 
   # Assert
-  wait_for file_holds "${BATS_TEST_TMPDIR}/opened" 'https://example.com/key'
+  wait_for file_holds "${BATS_TEST_TMPDIR}/opened" 'https://github.com/tmux-revamped/tmux-fzf-revamped/issues'
 }
 
 @test "cheatsheet - pressing its key lists the key bindings in the picker" {
@@ -263,4 +263,57 @@ bats_require_minimum_version 1.5.0
   wait_for host_shows "Move to session: "
   command tmux -S "${HOST}" send-keys -t host other: Enter
   wait_for windows_of other "main logs"
+}
+
+@test "urls - on a screen without a URL its key says so, where the popup used to close at once" {
+  # Arrange
+  bound_on url_key U
+  answers ""
+
+  # Act
+  command tmux -S "${HOST}" send-keys -t host C-b U
+
+  # Assert
+  wait_for said "fzf-revamped: no URL on this screen"
+  [[ ! -e "${BATS_TEST_TMPDIR}/fzf.args" ]]
+}
+
+@test "urls - the command says so too when the screen holds no URL" {
+  # Arrange
+  answers ""
+
+  # Act
+  tool urls
+
+  # Assert
+  [[ "${status}" -eq 0 ]]
+  wait_for said "fzf-revamped: no URL on this screen"
+}
+
+@test "zoxide - with no folder listed its key says so" {
+  # Arrange
+  printf '#!/bin/sh\nexit 0\n' >"${BATS_TEST_TMPDIR}/stubs/zoxide"
+  chmod +x "${BATS_TEST_TMPDIR}/stubs/zoxide"
+  bound_on zoxide_key Z
+  answers ""
+
+  # Act
+  command tmux -S "${HOST}" send-keys -t host C-b Z
+
+  # Assert
+  wait_for said "fzf-revamped: zoxide listed no folder"
+}
+
+@test "zoxide - the command says so too when zoxide lists nothing" {
+  # Arrange
+  printf '#!/bin/sh\nexit 0\n' >"${BATS_TEST_TMPDIR}/stubs/zoxide"
+  chmod +x "${BATS_TEST_TMPDIR}/stubs/zoxide"
+  answers ""
+
+  # Act
+  tool zoxide
+
+  # Assert
+  [[ "${status}" -eq 0 ]]
+  wait_for said "fzf-revamped: zoxide listed no folder"
 }

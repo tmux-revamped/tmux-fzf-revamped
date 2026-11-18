@@ -3,6 +3,7 @@ tmux               ok       <path>, 3.8
 fzf                ok       <path>
 opener             warn     urls open needs xdg-open or open
 zoxide             warn     the zoxide picker needs zoxide
+projects           warn     the projects picker needs a file, one folder per line; see @fzf_revamped_projects
 gum                ok       <path>
 awk                ok       <path>, <flavor>
 sed                ok       <path>, <flavor>

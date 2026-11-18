@@ -114,6 +114,12 @@ key_binding() {
   awk -v key="$2" '{ for (i = 1; i < NF; i++) { if ($i == "-T") { if ($(i + 2) == key) { print } break } } }' <<<"${table}"
 }
 
+said() {
+  local messages
+  messages=$(tmux show-messages)
+  [[ "${messages}" == *"$1"* ]]
+}
+
 tmux_shows() {
   local screen
   screen=$(tmux capture-pane -p -t "$1")

@@ -35,6 +35,14 @@ fzf-revamped \- switch, kill, rename or create sessions, windows and panes in fz
 .B fzf-revamped move\-window
 .RB [ move | link ]
 .br
+.B fzf-revamped arrange
+.RB [ join | break | swap | layout | resize ]
+.br
+.B fzf-revamped buffers
+.RB [ paste | delete ]
+.br
+.B fzf-revamped projects
+.br
 .B fzf-revamped preview
 .I target
 .br
@@ -115,11 +123,42 @@ Switch to the last session.
 Move or link the window picked to a session typed at a prompt in the
 popup. An empty answer moves nothing.
 .TP
+.BR arrange " [" join | break | swap | layout | resize ]
+Rearrange panes around the pane under the popup.
+.B join
+brings the pane picked into this window,
+.B break
+moves the pane picked into its own window and goes there,
+.B swap
+swaps the pane picked with this one,
+.B layout
+lays this window out as picked, with the mirrored layouts on tmux 3.5 and
+later, and
+.B resize
+moves an edge of this pane left, right, up or down by 5, 10 or 20 cells.
+Without an action it asks which.
+.TP
+.BR buffers " [" paste | delete ]
+Paste the tmux buffer picked into the pane under the popup, or delete it. Each
+line shows the buffer's name and the start of its text.
+.TP
+.B projects
+Open a session at a folder listed in the projects file, named after the
+folder, or switch to it when it is running; a running one is marked with a
+star. The file holds one folder per line: a line with a
+.B *
+lists every folder it matches,
+.B ~
+is the home folder, and a line that starts with
+.B #
+is skipped.
+.TP
 .BI preview " target"
 Print a pane, for the switch preview.
 .TP
 .B doctor
-Print one row per dependency: tmux, fzf, the opener, zoxide, gum, a default key
+Print one row per dependency: tmux, fzf, the opener, zoxide, the projects file,
+gum, a default key
 someone else holds, and the core tools. Exits 1 only when a required tool is
 missing.
 .TP
@@ -215,6 +254,10 @@ default.
 The zoxide sessions, the last session and the window mover. Unbound by
 default.
 .TP
+.BR @fzf_revamped_arrange_key ", " @fzf_revamped_buffer_key ", " @fzf_revamped_projects_key
+The pane arranger, the buffer picker and the project sessions. Unbound by
+default.
+.TP
 .BR @fzf_revamped_popup_width ", " @fzf_revamped_popup_height
 The popup size. The defaults are
 .B 60%
@@ -243,6 +286,15 @@ shows the pane under the cursor in the switch pickers.
 .B @fzf_revamped_mru
 .B on
 orders the sessions by their last attach.
+.TP
+.B @fzf_revamped_projects
+The projects file. The default is
+.B fzf-revamped/projects
+under
+.BR XDG_CONFIG_HOME ,
+or under
+.B ~/.config
+when that is unset.
 .TP
 .B @revamped_theme
 The theme of every tmux-revamped tool, when nothing else sets one. The default
