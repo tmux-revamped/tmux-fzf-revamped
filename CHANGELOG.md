@@ -1,5 +1,17 @@
 # Changelog
 
+# [2.2.0](https://github.com/tmux-revamped/tmux-fzf-revamped/compare/v2.1.0...v2.2.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* stop counting some characters twice ([115d1a4](https://github.com/tmux-revamped/tmux-fzf-revamped/commit/115d1a48e634599e84e7d279a85860345fa9ac04))
+
+
+### Features
+
+* add arrange, buffers and projects pickers ([9e8ff6e](https://github.com/tmux-revamped/tmux-fzf-revamped/commit/9e8ff6e1498804cf96d44d5d617174effffed946))
+
 # [2.1.0](https://github.com/tmux-revamped/tmux-fzf-revamped/compare/v2.0.0...v2.1.0) (2026-11-17)
 
 
