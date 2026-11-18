@@ -49,7 +49,7 @@ recover_repos() {
   git init -q --bare "${WORK}/origin.git"
   git init -q -b main "${WORK}/repo"
   git -C "${WORK}/repo" config user.name "recover test"
-  git -C "${WORK}/repo" config user.email "recover@test.invalid"
+  git -C "${WORK}/repo" config user.email ""
   git -C "${WORK}/repo" config commit.gpgsign false
   git -C "${WORK}/repo" commit -q --allow-empty -m "feat: add a command"
   git -C "${WORK}/repo" remote add origin "${WORK}/origin.git"

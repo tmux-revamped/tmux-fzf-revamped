@@ -11,7 +11,7 @@ setup() {
   PATH="${WORK}/bin:${PATH}"
   git -C "${WORK}/repo" init -q
   git -C "${WORK}/repo" config user.name "ci-state test"
-  git -C "${WORK}/repo" config user.email "ci-state@test.invalid"
+  git -C "${WORK}/repo" config user.email ""
   git -C "${WORK}/repo" config commit.gpgsign false
   git -C "${WORK}/repo" config tag.gpgsign false
 }

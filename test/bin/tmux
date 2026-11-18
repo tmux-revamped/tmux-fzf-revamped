@@ -1,4 +1,5 @@
 #!/bin/sh
+{ set +x; } 2>/dev/null
 set -u
 
 store="${REVAMPED_TEST_TMUX_DIR:?}"

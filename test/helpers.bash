@@ -46,7 +46,7 @@ harness_hide() {
 stub_command() {
   mkdir -p "${BATS_TEST_TMPDIR}/stubs"
   # shellcheck disable=SC2016
-  printf '#!/bin/sh\nfor a in "$@"; do printf "%%s\\n" "$a"; done >>"%s"\n' "${BATS_TEST_TMPDIR}/$1.calls" >"${BATS_TEST_TMPDIR}/stubs/$1"
+  printf '#!/bin/sh\n{ set +x; } 2>/dev/null\nfor a in "$@"; do printf "%%s\\n" "$a"; done >>"%s"\n' "${BATS_TEST_TMPDIR}/$1.calls" >"${BATS_TEST_TMPDIR}/stubs/$1"
   chmod +x "${BATS_TEST_TMPDIR}/stubs/$1"
 }
 
