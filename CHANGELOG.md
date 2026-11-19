@@ -1,5 +1,19 @@
 # Changelog
 
+# [2.3.0](https://github.com/tmux-revamped/tmux-fzf-revamped/compare/v2.2.0...v2.3.0) (2026-11-19)
+
+
+### Bug Fixes
+
+* fold a table wider than the terminal ([fb65c61](https://github.com/tmux-revamped/tmux-fzf-revamped/commit/fb65c61ee014ce00b271c67246d5e5f6e9391456))
+* read the grep of macOS as bsd in doctor ([6993758](https://github.com/tmux-revamped/tmux-fzf-revamped/commit/69937581849a7ed6eec5f7b3e2f51fe908d07505))
+* stop a recording that hangs ([2fb562a](https://github.com/tmux-revamped/tmux-fzf-revamped/commit/2fb562a9a63e09bf2d9ecde37cab89703c3f8d8c))
+
+
+### Features
+
+* name unknown setting values in doctor ([2e558fd](https://github.com/tmux-revamped/tmux-fzf-revamped/commit/2e558fd6ad33fcfdc9db2ce371e4fc3bf8126c75))
+
 # [2.2.0](https://github.com/tmux-revamped/tmux-fzf-revamped/compare/v2.1.0...v2.2.0) (2026-11-18)
 
 
