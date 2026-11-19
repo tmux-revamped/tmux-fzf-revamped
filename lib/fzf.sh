@@ -35,10 +35,14 @@ fzf_revamped_resolve() {
   '
 }
 
+fzf_revamped_setting_rows() {
+  fzf_revamped_setting_rows_format=$(fzf_revamped_format)
+  fzf_revamped_setting_rows_live=$(tmux display-message -p "${fzf_revamped_setting_rows_format}" 2>/dev/null) || fzf_revamped_setting_rows_live=""
+  fzf_revamped_resolve "${fzf_revamped_setting_rows_live}"
+}
+
 fzf_revamped_load() {
-  fzf_revamped_load_format=$(fzf_revamped_format)
-  fzf_revamped_load_live=$(tmux display-message -p "${fzf_revamped_load_format}" 2>/dev/null) || fzf_revamped_load_live=""
-  fzf_revamped_load_values=$(fzf_revamped_resolve "${fzf_revamped_load_live}")
+  fzf_revamped_load_values=$(fzf_revamped_setting_rows)
   while IFS='	' read -r fzf_revamped_load_name fzf_revamped_load_value; do
     IFS= read -r "FZF_REVAMPED_S_${fzf_revamped_load_name}" <<EOF
 ${fzf_revamped_load_value}

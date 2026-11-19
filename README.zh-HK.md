@@ -102,7 +102,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_mru` | `off` | `on` 時按最後連接時間排列工作階段 |
 | `@fzf_revamped_projects` | `~/.config/fzf-revamped/projects` | 專案選擇器讀取的檔案，每行一個資料夾；設定了 `XDG_CONFIG_HOME` 時位於其下 |
 
-每個選項亦可寫成以短橫線連接的命令選項，例如 `--session-key S`，以及環境變數，例如 `FZF_REVAMPED_SESSION_KEY`；命令列優先於環境變數，環境變數優先於 tmux 選項。以 tmux 選項給出的 `preview`、`mru` 和 `projects` 在選擇器執行時讀取；透過命令列或環境變數傳給 `fzf-revamped apply` 的值會帶到它綁定的按鍵上。空的 tmux 選項表示使用預設值。
+每個選項亦可寫成以短橫線連接的命令選項，例如 `--session-key S`，以及環境變數，例如 `FZF_REVAMPED_SESSION_KEY`；命令列優先於環境變數，環境變數優先於 tmux 選項。以 tmux 選項給出的 `preview`、`mru` 和 `projects` 在選擇器執行時讀取；透過命令列或環境變數傳給 `fzf-revamped apply` 的值會帶到它綁定的按鍵上。空的 tmux 選項表示使用預設值。`doctor` 會指出數值無法識別的設定。
 
 <a id="選擇器"></a>
 

@@ -166,6 +166,12 @@ fzf_revamped_doctor_optional() {
   revamped_doctor_line "$1" warn "$3"
 }
 
+fzf_revamped_doctor_settings() {
+  fzf_revamped_doctor_settings_rows=$(fzf_revamped_setting_rows)
+  # shellcheck disable=SC2154
+  revamped_doctor_settings "${FZF_REVAMPED_KINDS}" "${fzf_revamped_doctor_settings_rows}"
+}
+
 fzf_revamped_doctor() {
   revamped_doctor_tmux
   revamped_doctor_required fzf "brew install fzf, or apt install fzf"
@@ -178,6 +184,7 @@ fzf_revamped_doctor() {
   [ -r "${fzf_revamped_doctor_projects}" ] || fzf_revamped_doctor_projects=""
   fzf_revamped_doctor_optional projects "${fzf_revamped_doctor_projects}" "the projects picker needs a file, one folder per line; see @fzf_revamped_projects"
   [ -z "${FZF_REVAMPED_TAKEN}" ] || revamped_doctor_line "prefix ${FZF_REVAMPED_TAKEN}" warn "already bound, so the palette has no key; set @fzf_revamped_palette_key"
+  fzf_revamped_doctor_settings
   revamped_doctor_gum
   revamped_doctor_core_tools awk sed grep tr sort cut ps
   revamped_doctor_finish

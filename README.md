@@ -102,7 +102,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_mru` | `off` | `on` orders sessions by their last attach |
 | `@fzf_revamped_projects` | `~/.config/fzf-revamped/projects` | The file the projects picker reads, one folder per line; under `XDG_CONFIG_HOME` when that is set |
 
-Every option is also a command option with dashes, such as `--session-key S`, and an environment variable, such as `FZF_REVAMPED_SESSION_KEY`; the command line wins over the environment, and the environment over the tmux option. A `preview`, `mru` or `projects` given as a tmux option is read when a picker runs, and one given to `fzf-revamped apply` on the command line or in the environment rides on the keys it binds. An empty tmux option means its default.
+Every option is also a command option with dashes, such as `--session-key S`, and an environment variable, such as `FZF_REVAMPED_SESSION_KEY`; the command line wins over the environment, and the environment over the tmux option. A `preview`, `mru` or `projects` given as a tmux option is read when a picker runs, and one given to `fzf-revamped apply` on the command line or in the environment rides on the keys it binds. An empty tmux option means its default. `doctor` names any setting that holds a value the plugin does not know.
 
 <a id="pickers"></a>
 

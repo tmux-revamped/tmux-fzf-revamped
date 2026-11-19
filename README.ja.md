@@ -102,7 +102,7 @@ set -g @fzf_revamped_last_key 'L'
 | `@fzf_revamped_mru` | `off` | `on` でセッションを最後に接続した順に並べます |
 | `@fzf_revamped_projects` | `~/.config/fzf-revamped/projects` | プロジェクトの選択画面が読むファイル。1 行に 1 つのフォルダを書きます。`XDG_CONFIG_HOME` があればその下を使います |
 
-どのオプションも、ダッシュ区切りのコマンドオプション（例 `--session-key S`）と環境変数（例 `FZF_REVAMPED_SESSION_KEY`）で指定できます。優先順位はコマンドライン、環境変数、tmux オプションの順です。tmux オプションで指定した `preview`、`mru`、`projects` は選択画面を開くたびに読まれ、`fzf-revamped apply` にコマンドラインまたは環境変数で渡したものは割り当てたキーに引き継がれます。空の tmux オプションは既定値を意味します。
+どのオプションも、ダッシュ区切りのコマンドオプション（例 `--session-key S`）と環境変数（例 `FZF_REVAMPED_SESSION_KEY`）で指定できます。優先順位はコマンドライン、環境変数、tmux オプションの順です。tmux オプションで指定した `preview`、`mru`、`projects` は選択画面を開くたびに読まれ、`fzf-revamped apply` にコマンドラインまたは環境変数で渡したものは割り当てたキーに引き継がれます。空の tmux オプションは既定値を意味します。`doctor` は、プラグインが認識できない値を持つ設定の名前を表示します。
 
 <a id="ピッカー"></a>
 
